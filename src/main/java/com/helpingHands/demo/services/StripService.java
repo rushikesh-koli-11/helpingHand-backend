@@ -78,8 +78,8 @@
 //            
 //            SessionCreateParams sessionCreateParams = SessionCreateParams.builder()
 //                    .setMode(SessionCreateParams.Mode.PAYMENT)
-//                    .setSuccessUrl("http://localhost:3000/api/donations/success/"+savedDonation.getDonationId())
-//                    .setCancelUrl("http://localhost:3000/api/donations/cancel/"+savedDonation.getDonationId())
+//                    .setSuccessUrl("http://13.60.58.158/api/donations/success/"+savedDonation.getDonationId())
+//                    .setCancelUrl("http://13.60.58.158/api/donations/cancel/"+savedDonation.getDonationId())
 //                    .addLineItem(lineItem) 
 //                    .build();
 //            // Create Session

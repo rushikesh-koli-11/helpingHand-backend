@@ -12,8 +12,8 @@ public class PaymentConstants {
 	    public static final String DEFAULT_CURRENCY = "INR";
 
 	    // Success and Failure URLs
-	    public static final String SUCCESS_URL = "http://localhost:3000/donations/success?donationId=";
-	    public static final String CANCEL_URL = "http://localhost:3000/donations/cancel?donationId=";
+	    public static final String SUCCESS_URL = "http://13.60.58.158//donations/success?donationId=";
+	    public static final String CANCEL_URL = "http://13.60.58.158//donations/cancel?donationId=";
 
 	    // Error Messages
 	    public static final String INVALID_DONATION_AMOUNT = "Invalid donation amount.";
