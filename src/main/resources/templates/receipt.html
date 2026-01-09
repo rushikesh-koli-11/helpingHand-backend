@@ -1,0 +1,157 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Donation Receipt</title>
+    <style type="text/css">
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .receipt-container {
+            width: 600px;
+            margin: 20px auto;
+            background: white;
+            border: 2px solid #039695;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        .header {
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #039695;
+        }
+        .header img {
+            width: 60px;
+            vertical-align: middle;
+        }
+        .header h1 {
+            display: inline;
+            font-size: 26px;
+            color: #039695;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+        .section {
+            margin-top: 20px;
+        }
+        .section-title {
+            font-weight: bold;
+            background: #e6f9f8;
+            padding: 12px;
+            border-left: 4px solid #039695;
+            font-size: 16px;
+        }
+        .content-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        .content-table td, .content-table th {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        .content-table th {
+            background: #e6f9f8;
+            font-weight: bold;
+            color: #039695;
+        }
+        .total-row {
+            font-weight: bold;
+            background: #d9f3f1;
+            color: #039695;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+            text-align: center;
+            padding-top: 10px;
+            border-top: 2px solid #039695;
+        }
+    </style>
+</head>
+<body>
+    <div class="receipt-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Helping Hands</h1>
+        </div>
+
+        <!-- Organization Info -->
+        <div class="section">
+            <p>
+                <strong>Helping Hands</strong> <br />
+                Kadugodi Tree Park, Whitefield, Bengaluru, 560066.<br />
+                Email: helpinghands@gmail.com | Website: www.helpinghands.com
+            </p>
+        </div>
+
+        <!-- Donation Information -->
+        <div class="section">
+            <div class="section-title">📅 Donation Information</div>
+            <table class="content-table">
+                <tr>
+                    <th>Date</th>
+                    <td>{{donationDate}}</td>
+                </tr>
+                <tr>
+                    <th>Receipt Number</th>
+                    <td>{{receiptNumber}}</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Donor Info -->
+        <div class="section">
+            <div class="section-title">🙋 Donor Information</div>
+            <table class="content-table">
+                <tr>
+                    <th>Name</th>
+                    <td>{{name}}</td>
+                </tr>
+                <tr>
+                    <th>Email</th>
+                    <td>{{email}}</td>
+                </tr>
+                <tr>
+                    <th>Transaction ID</th>
+                    <td>{{transactionId}}</td>
+                </tr>
+                <tr>
+                    <th>Contact Number</th>
+                    <td>{{contactNumber}}</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Donation Description -->
+        <div class="section">
+            <div class="section-title">💡 Donation Details</div>
+            <table class="content-table">
+                <tr>
+                    <th>Description</th>
+                    <th>Amount</th>
+                </tr>
+                <tr>
+                    <td>Donation for <strong>{{fundraiserTitle}}</strong></td>
+                    <td>₹{{amount}}</td>
+                </tr>
+                <tr class="total-row">
+                    <td>Total</td>
+                    <td><strong>₹{{amount}}</strong></td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>🙏 Thank you for your generous donation! Your support helps us achieve our mission.</p>
+        </div>
+    </div>
+</body>
+</html>
