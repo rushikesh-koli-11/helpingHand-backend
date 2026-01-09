@@ -107,6 +107,24 @@ public class FundraiserDetailsServiceImpl implements FundraiserDetailsService {
     }
 
     /**
+     * Fetching fundraiser details by fundraiser ID.
+     * 
+     * @param fundraiserId The ID of the fundraiser.
+     * @return The DTO representation of the fundraiser details, or null if not found.
+     */
+    @Override
+    public FundraiserDetailsDTO getFundraiserDetailsByFundraiserId(String fundraiserId) {
+        FundraiserDetails entity = fundraiserDetailsRepository.findByFundraiserId(fundraiserId)
+                .orElse(null);
+        
+        if (entity == null) {
+            return null;
+        }
+        
+        return fundraiserDetailsMapper.toDTO(entity);
+    }
+
+    /**
      * Deleting fundraiser details by ID.
      * 
      * @param id The ID of the fundraiser details.

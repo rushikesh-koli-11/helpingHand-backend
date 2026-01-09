@@ -165,9 +165,13 @@ public class DonationsServiceImpl implements DonationsService {
             donation.setStatus(status);
             if (DonationStatus.SUCCESS.equals(donation.getStatus())) {
                 Fundraiser fundraiser = donation.getFundraiser();
-                FundraiserDetails fundraiserDetails = fundraiser.getFundraiserDetails();
-                fundraiserDetails.setRemainingAmount(fundraiserDetails.getRemainingAmount() - donation.getAmount());
-                fundraiserDetailsRepository.save(fundraiserDetails);
+                FundraiserDetails fundraiserDetails = null;
+                if (fundraiser != null && fundraiser.getId() != null) {
+                    fundraiserDetails = fundraiserDetailsRepository.findByFundraiserId(fundraiser.getId())
+                        .orElseThrow(() -> new CustomExceptions(FundraiserConstants.FUNDRAISER_NOT_FOUND));
+                    fundraiserDetails.setRemainingAmount(fundraiserDetails.getRemainingAmount() - donation.getAmount());
+                    fundraiserDetailsRepository.save(fundraiserDetails);
+                }
 
                 // Generating a PDF receipt
                 Path htmlPath = ResourceUtils.getFile("classpath:templates/receipt.html").toPath();
@@ -186,8 +190,8 @@ public class DonationsServiceImpl implements DonationsService {
                 receiptContent = receiptContent.replace("{{amount}}", donation.getAmount() != null ? donation.getAmount().toString() : "0");
                 receiptContent = receiptContent.replace("{{donationDate}}", donation.getDonationDate() != null ? donation.getDonationDate().toString() : "");
                 receiptContent = receiptContent.replace("{{transactionId}}", donation.getTransactionId() != null ? donation.getTransactionId() : "");
-                if (fundraiser != null && fundraiser.getFundraiserDetails() != null) {
-                    receiptContent = receiptContent.replace("{{fundraiserTitle}}", fundraiser.getFundraiserDetails().getPatientName() != null ? fundraiser.getFundraiserDetails().getPatientName() : "");
+                if (fundraiserDetails != null && fundraiserDetails.getPatientName() != null) {
+                    receiptContent = receiptContent.replace("{{fundraiserTitle}}", fundraiserDetails.getPatientName());
                 } else {
                     receiptContent = receiptContent.replace("{{fundraiserTitle}}", "");
                 }

@@ -13,6 +13,8 @@ public interface FundraiserDetailsService {
 	List<FundraiserDetailsDTO> getAllFundraiserDetails();
 
 	FundraiserDetailsDTO getFundraiserDetailsById(String id);
+	
+	FundraiserDetailsDTO getFundraiserDetailsByFundraiserId(String fundraiserId);
 
 	void deleteFundraiserDetails(String id);
 

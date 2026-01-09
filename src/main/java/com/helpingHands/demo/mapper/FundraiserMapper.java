@@ -5,11 +5,15 @@ import org.springframework.stereotype.Component;
 import com.helpingHands.demo.DTO.FundraiserDTO;
 import com.helpingHands.demo.entities.Fundraiser;
 import com.helpingHands.demo.entities.User;
+import com.helpingHands.demo.repository.FundraiserDetailsRepository;
 
 @Component
 public class FundraiserMapper {
 	@Autowired
 	public FundraiserDetailsMapper fundraiserDetailsMapper;
+	
+	@Autowired
+	public FundraiserDetailsRepository fundraiserDetailsRepository;
 
 	public FundraiserDTO toDTO(Fundraiser fundraiser) {
 	    if (fundraiser == null) {
@@ -30,10 +34,16 @@ public class FundraiserMapper {
 	        dto.setUserId(fundraiser.getUser().getUserId());
 	    }
 
-	    // Ensure fundraiserDetails is not null
-	    dto.setFundraiserDetailsDTO(fundraiser.getFundraiserDetails() != null 
-	        ? fundraiserDetailsMapper.toDTO(fundraiser.getFundraiserDetails()) 
-	        : null);
+	    // Fetch fundraiserDetails using repository
+	    if (fundraiser.getId() != null) {
+	        dto.setFundraiserDetailsDTO(
+	            fundraiserDetailsRepository.findByFundraiserId(fundraiser.getId())
+	                .map(fundraiserDetailsMapper::toDTO)
+	                .orElse(null)
+	        );
+	    } else {
+	        dto.setFundraiserDetailsDTO(null);
+	    }
 	    
 	    return dto;
 	}

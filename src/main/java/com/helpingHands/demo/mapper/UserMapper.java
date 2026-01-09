@@ -52,6 +52,7 @@ public class UserMapper {
 
     public UserDTO toDTO(User user) {
         return new UserDTO(user.getUserId(),
+        				   null, // fundraiserIds - not stored in User entity
         				   user.getName(), 
         				   user.getEmail(), 
         				   user.getPassword(), 

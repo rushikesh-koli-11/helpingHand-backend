@@ -66,7 +66,17 @@ public class FundraiserDetailsController {
         if (fundraiserDetailsDTO == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(fundraiserDetailsService.getFundraiserDetailsById(id));
+        return ResponseEntity.ok(fundraiserDetailsDTO);
+    }
+
+    // Getting fundraiser details by fundraiser ID
+    @GetMapping("/fundraiser/{fundraiserId}")
+    public ResponseEntity<FundraiserDetailsDTO> getFundraiserDetailsByFundraiserId(@PathVariable String fundraiserId) {
+        FundraiserDetailsDTO fundraiserDetailsDTO = fundraiserDetailsService.getFundraiserDetailsByFundraiserId(fundraiserId);
+        if (fundraiserDetailsDTO == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(fundraiserDetailsDTO);
     }
 
     // Deleting fundraiser details by ID

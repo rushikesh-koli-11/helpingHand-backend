@@ -44,10 +44,13 @@ public class UserController {
 	@PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody UserDTO userDTO) {
 		
-        // Verifying reCAPTCHA before proceeding
-        if (recaptchaService.verifyRecaptcha(userDTO.getRecaptchaToken())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("reCAPTCHA verification failed");
+        // Verifying reCAPTCHA before proceeding (optional - only if token is provided)
+        String recaptchaToken = userDTO.getRecaptchaToken();
+        if (recaptchaToken != null && !recaptchaToken.trim().isEmpty()) {
+            if (!recaptchaService.verifyRecaptcha(recaptchaToken)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("reCAPTCHA verification failed");
+            }
         }
 
         Optional<User> optionalUser = userRepository.findByEmail(userDTO.getEmail());
@@ -68,14 +71,7 @@ public class UserController {
 
 	// Registering a new user
 	@PostMapping("/register")
-	public ResponseEntity<UserDTO> registerUser(@RequestParam("name") String name, @RequestParam("email") String email,
-			@RequestParam("password") String password, @RequestParam("contactNumber") String contactNumber) {
-		UserDTO userDto = new UserDTO();
-		userDto.setName(name);
-		userDto.setEmail(email);
-		userDto.setPassword(password);
-		userDto.setContactNumber(contactNumber);
-
+	public ResponseEntity<UserDTO> registerUser(@RequestBody UserDTO userDto) {
 		return ResponseEntity.ok(userServices.registerUser(userDto));
 	}
 

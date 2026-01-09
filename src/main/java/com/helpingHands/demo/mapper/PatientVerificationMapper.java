@@ -18,7 +18,7 @@ public class PatientVerificationMapper {
 
         PatientVerificationDTO dto = new PatientVerificationDTO();
         dto.setVerificationId(entity.getVerificationId());
-        dto.setFundraiserId(entity.getFundraiserId().getId());  
+        dto.setFundraiserId(entity.getFundraiser() != null ? entity.getFundraiser().getId() : null);  
         dto.setAdhaarNumber(entity.getAdhaarNumber());
         dto.setPanNumber(entity.getPanNumber());
         return dto;
@@ -41,7 +41,7 @@ public class PatientVerificationMapper {
 
         PatientVerification entity = new PatientVerification();
         entity.setVerificationId(dto.getVerificationId());
-        entity.setFundraiserId(fundraiser);  
+        entity.setFundraiser(fundraiser);  
         entity.setAdhaarNumber(dto.getAdhaarNumber());
         entity.setPanNumber(dto.getPanNumber());
         return entity;

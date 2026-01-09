@@ -40,8 +40,8 @@ public class PatientVerificationController {
     }
 
     // Getting a patient verification by fundraiser ID
-    @GetMapping("/{fundraiserId}")
-    public ResponseEntity<PatientVerificationDTO> getPatientVerificationById(@PathVariable String fundraiserId) {
+    @GetMapping("/fundraiser/{fundraiserId}")
+    public ResponseEntity<PatientVerificationDTO> getPatientVerificationByFundraiserId(@PathVariable String fundraiserId) {
         return ResponseEntity.ok(patientVerificationService.getPatientVerificationByfundraiserId(fundraiserId));
     }
 
