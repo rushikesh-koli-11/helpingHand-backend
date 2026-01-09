@@ -1,30 +1,23 @@
 package com.helpingHands.demo.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
+@Document(collection = "hospital_details")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "HospitalDetails")
 public class HospitalDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int Id;
+    private String id;
 
-    @OneToOne
-    @JoinColumn(name = "fundraiserId")
+    @DBRef
     private Fundraiser fundraiser;
 
     private String hospitalName;
@@ -32,7 +25,6 @@ public class HospitalDetails {
     private Long patientUHIDNumber;
     private String consultingDoctor;
     private Long doctorPhoneNumber;
-    private String additionalInformation;  
-
+    private String additionalInformation;
 }
 

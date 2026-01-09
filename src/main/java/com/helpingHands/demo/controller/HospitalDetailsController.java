@@ -36,8 +36,8 @@ public class HospitalDetailsController {
     }
 
     // Getting hospital details by fundraiser ID
-    @GetMapping("/{fundraiserId}")
-    public ResponseEntity<HospitalDetailsDTO> getHospitalDetailsByFundraiserId(@PathVariable int fundraiserId) {
+    @GetMapping("/fundraiser/{fundraiserId}")
+    public ResponseEntity<HospitalDetailsDTO> getHospitalDetailsByFundraiserId(@PathVariable String fundraiserId) {
         return ResponseEntity.ok(hospitalDetailsService.getHospitalDetailsByFundraiserId(fundraiserId));
     }
 
@@ -47,9 +47,15 @@ public class HospitalDetailsController {
         return ResponseEntity.ok(hospitalDetailsService.getAllHospitalDetails());
     }
 
+    // Getting hospital details by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<HospitalDetailsDTO> getHospitalDetailsById(@PathVariable String id) {
+        return ResponseEntity.ok(hospitalDetailsService.getHospitalDetailsById(id));
+    }
+
     // Updating hospital details by ID
     @PutMapping("/{id}")
-    public ResponseEntity<HospitalDetailsDTO> updateHospitalDetails(@PathVariable int id,
+    public ResponseEntity<HospitalDetailsDTO> updateHospitalDetails(@PathVariable String id,
             @RequestBody HospitalDetailsDTO hospitalDetailsDTO) {
         HospitalDetailsDTO updatedDetails = hospitalDetailsService.updateHospitalDetails(id, hospitalDetailsDTO);
         return ResponseEntity.ok(updatedDetails);
@@ -57,7 +63,7 @@ public class HospitalDetailsController {
 
     // Deleting hospital details by ID
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteHospitalDetails(@PathVariable int id) {
+    public ResponseEntity<Void> deleteHospitalDetails(@PathVariable String id) {
         hospitalDetailsService.deleteHospitalDetails(id);
         return ResponseEntity.noContent().build();
     }

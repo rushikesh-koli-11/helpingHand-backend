@@ -50,10 +50,16 @@ public class DonationsMapper {
 
         DonationsDTO dto = new DonationsDTO();
         dto.setDonationId(donation.getDonationId());
-        dto.setFundraiserId(donation.getFundraiser().getId());
-        dto.setUserId(donation.getUser().getUserId()); 
+        if (donation.getFundraiser() != null) {
+            dto.setFundraiserId(donation.getFundraiser().getId());
+        }
+        if (donation.getUser() != null) {
+            dto.setUserId(donation.getUser().getUserId());
+        }
         dto.setAmount(donation.getAmount());
-        dto.setDonationDate(formatDate(donation.getDonationDate())); 
+        if (donation.getDonationDate() != null) {
+            dto.setDonationDate(formatDate(donation.getDonationDate()));
+        }
         dto.setTransactionId(donation.getTransactionId());
         dto.setStatus(donation.getStatus());
         return dto;

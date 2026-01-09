@@ -34,13 +34,13 @@ public class SavedFundController {
 
     // Updating a saved fundraiser
     @PutMapping("/{saveId}")
-    public ResponseEntity<SavedFundDTO> updateFundraiser(@PathVariable int saveId, @RequestBody SavedFundDTO dto) {
+    public ResponseEntity<SavedFundDTO> updateFundraiser(@PathVariable String saveId, @RequestBody SavedFundDTO dto) {
         return ResponseEntity.ok(service.updateSavedFund(saveId, dto));
     }
 
     // Getting a saved fundraiser by its ID
     @GetMapping("/{saveId}")
-    public ResponseEntity<SavedFundDTO> getFundraiser(@PathVariable int saveId) {
+    public ResponseEntity<SavedFundDTO> getFundraiser(@PathVariable String saveId) {
         return ResponseEntity.ok(service.getSavedFundById(saveId));
     }
 
@@ -52,7 +52,7 @@ public class SavedFundController {
 
     // Deleting a saved fundraiser by its ID
     @DeleteMapping("/{saveId}")
-    public ResponseEntity<Void> deleteFundraiser(@PathVariable int saveId) {
+    public ResponseEntity<Void> deleteFundraiser(@PathVariable String saveId) {
         service.deleteSavedFund(saveId);
         return ResponseEntity.noContent().build();
     }

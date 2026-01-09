@@ -75,7 +75,7 @@ public class UserServiceImpl implements UserServices {
      * @throws CustomExceptions if the user is not found.
      */
     @Override
-    public UserDTO getUserById(int userId) {
+    public UserDTO getUserById(String userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomExceptions(UserConstants.USER_NOT_FOUND));
         return userMapper.toDTO(user);
@@ -128,7 +128,7 @@ public class UserServiceImpl implements UserServices {
      * @throws CustomExceptions if the user is not found.
      */
     @Override
-    public UserDTO updateUser(int userId, UserDTO userDto) {
+    public UserDTO updateUser(String userId, UserDTO userDto) {
         User existingUser = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomExceptions(UserConstants.USER_NOT_FOUND));
 
@@ -146,7 +146,7 @@ public class UserServiceImpl implements UserServices {
      * @throws CustomExceptions if the user is not found.
      */
     @Override
-    public UserDTO getFileById(int id) {
+    public UserDTO getFileById(String id) {
         return userRepository.findById(id)
                 .map(userMapper::toDTO)
                 .orElseThrow(() -> new CustomExceptions(UserConstants.USER_NOT_FOUND));

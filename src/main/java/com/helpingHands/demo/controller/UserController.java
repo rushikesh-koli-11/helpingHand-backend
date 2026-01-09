@@ -21,6 +21,7 @@ import com.helpingHands.demo.DTO.UserDTO;
 import com.helpingHands.demo.entities.User;
 import com.helpingHands.demo.mapper.UserMapper;
 import com.helpingHands.demo.repository.UserRepository;
+import com.helpingHands.demo.services.CloudinaryService;
 import com.helpingHands.demo.services.UserServices;
 import com.helpingHands.demo.services.serviceImpl.RecaptchaService;
 
@@ -33,12 +34,10 @@ import lombok.RequiredArgsConstructor;
 public class UserController {
 
 	private final UserServices userServices;
-
 	private final UserRepository userRepository;
-
 	private final UserMapper userMapper;
-	
-    private final RecaptchaService recaptchaService; 
+	private final RecaptchaService recaptchaService;
+	private final CloudinaryService cloudinaryService; 
 	
 
 	// Logging in a user with reCAPTCHA verification
@@ -83,7 +82,7 @@ public class UserController {
 	
 	// Getting a user by their ID
 	@GetMapping("/{userId}")
-	public UserDTO getUserById(@PathVariable int userId) {
+	public UserDTO getUserById(@PathVariable String userId) {
 		return userServices.getUserById(userId);
 	}
 
@@ -109,59 +108,35 @@ public class UserController {
 
 	// Updating a user's details
 	@PutMapping("/update/{userId}")
-    public UserDTO updateUser(@PathVariable int userId, @RequestBody UserDTO userDto) {
+    public UserDTO updateUser(@PathVariable String userId, @RequestBody UserDTO userDto) {
         return userServices.updateUser(userId, userDto);
     }
 
-	// Downloading a user's profile picture as a Base64-encoded string
+	// Getting a user's profile picture URL
 	@GetMapping("/download/{id}")
-    public ResponseEntity<String> downloadFileAsBase64(@PathVariable int id) {
+    public ResponseEntity<String> getProfilePictureUrl(@PathVariable String id) {
         UserDTO userDTO = userServices.getFileById(id);
         if (userDTO != null && userDTO.getProfilePicture() != null) {
-            String base64Data = Base64.getEncoder().encodeToString(userDTO.getProfilePicture());
             return ResponseEntity.ok()
                     .header("Content-Type", "application/json")
-                    .body(base64Data);
+                    .body(userDTO.getProfilePicture());
         }
         return ResponseEntity.notFound().build();
     }
 
 	// Uploading a profile picture for a user
     @PutMapping("/upload")
-    public UserDTO uploadFile(@RequestParam("file") MultipartFile file, @RequestParam int userId) {
-
-    	User byId = userRepository.findById(userId).get();
-    	UserDTO userDTO = new UserDTO();
+    public UserDTO uploadFile(@RequestParam("file") MultipartFile file, @RequestParam String userId) throws IOException {
+        User byId = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
 
         if (file != null && !file.isEmpty()) {
-            byte[] fileBytes = convertFileToByteArray(file);
-            byId.setProfilePicture(fileBytes);
-            userRepository.save(byId);
-            userMapper.toDTO(byId);
-            return userDTO;
+            // Upload to Cloudinary
+            String imageUrl = cloudinaryService.uploadFile(file, "profile-pictures");
+            byId.setProfilePicture(imageUrl);
+            User savedUser = userRepository.save(byId);
+            return userMapper.toDTO(savedUser);
         }
-        return null;
-    }
-
-    // Converting a Base64 string to an image
-    @PostMapping("/convert-to-image")
-    public ResponseEntity<byte[]> convertBase64ToImage(@RequestBody String base64Data) {
-        try {
-            byte[] imageBytes = Base64.getDecoder().decode(base64Data);
-            return ResponseEntity.ok()
-                    .header("Content-Type", "image/jpeg")
-                    .body(imageBytes);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(null);
-        }
-    }
-
-    // Helper method to convert a MultipartFile to a byte array
-    private byte[] convertFileToByteArray(MultipartFile file) {
-        try {
-            return file.getBytes();
-        } catch (IOException e) {
-            throw new RuntimeException("Error converting file to byte array", e);
-        }
+        return userMapper.toDTO(byId);
     }
 }

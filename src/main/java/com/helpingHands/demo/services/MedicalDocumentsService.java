@@ -9,9 +9,9 @@ import com.helpingHands.demo.DTO.MedicalDocumentsDTO;
 public interface MedicalDocumentsService {
 	MedicalDocumentsDTO uploadDocuments(MedicalDocumentsDTO dto);
 
-	Optional<MedicalDocumentsDTO> getMedicalDocumentsByFundraiserId(int fundraiserId);
+	Optional<MedicalDocumentsDTO> getMedicalDocumentsByFundraiserId(String fundraiserId);
 
-	MedicalDocumentsDTO updateDocuments(int fundraiserId, MultipartFile medicalEstimate,
+	MedicalDocumentsDTO updateDocuments(String fundraiserId, MultipartFile medicalEstimate,
 			MultipartFile consentLetterFromPatient, MultipartFile medicalReports, MultipartFile otherDocs,
 			String additionalInformation);
 }

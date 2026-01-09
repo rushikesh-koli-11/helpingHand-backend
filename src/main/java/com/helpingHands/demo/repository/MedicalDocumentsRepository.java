@@ -1,16 +1,15 @@
 package com.helpingHands.demo.repository;
 
-
 import java.util.Optional;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
 
 import com.helpingHands.demo.entities.MedicalDocuments;
 
-public interface MedicalDocumentsRepository extends JpaRepository<MedicalDocuments, Integer> {
-    
-    // Custom query method to fetch MedicalDocuments by fundraiserId
-    Optional<MedicalDocuments> findByFundraiser_Id(int fundraiserId);
+@Repository
+public interface MedicalDocumentsRepository extends MongoRepository<MedicalDocuments, String> {
+    Optional<MedicalDocuments> findByFundraiserId(String fundraiserId);
 }
 
 

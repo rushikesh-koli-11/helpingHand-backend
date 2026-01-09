@@ -51,7 +51,9 @@ public class BankDetailsMapper {
         bankDetailsDTO.setAccountType(bankDetails.getAccountType());
         bankDetailsDTO.setBranchName(bankDetails.getBranchName());
         bankDetailsDTO.setBranchAddress(bankDetails.getBranchAddress());
-        bankDetailsDTO.setFundraiserId(bankDetails.getFundraiser().getId());
+        if (bankDetails.getFundraiser() != null) {
+            bankDetailsDTO.setFundraiserId(bankDetails.getFundraiser().getId());
+        }
 
         return bankDetailsDTO;
     }

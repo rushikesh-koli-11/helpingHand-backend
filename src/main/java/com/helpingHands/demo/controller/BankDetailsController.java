@@ -32,9 +32,15 @@ public class BankDetailsController {
     }
 
     // Getting bank details by fundraiser ID
-    @GetMapping("/{fundraiserId}")
-    public BankDetailsDTO getBankDetailsById(@PathVariable int fundraiserId) {
+    @GetMapping("/fundraiser/{fundraiserId}")
+    public BankDetailsDTO getBankDetailsByFundraiserId(@PathVariable String fundraiserId) {
         return bankDetailsService.getBankDetailsByFundraiserId(fundraiserId);
+    }
+
+    // Getting bank details by ID
+    @GetMapping("/{bankId}")
+    public BankDetailsDTO getBankDetailsById(@PathVariable String bankId) {
+        return bankDetailsService.getBankDetailsById(bankId);
     }
 
     // Adding new bank details
@@ -45,13 +51,13 @@ public class BankDetailsController {
 
     // Updating existing bank details by bank ID
     @PutMapping("/{bankId}")
-    public BankDetailsDTO updateBankDetails(@PathVariable int bankId, @RequestBody BankDetailsDTO bankDetailsDTO) {
+    public BankDetailsDTO updateBankDetails(@PathVariable String bankId, @RequestBody BankDetailsDTO bankDetailsDTO) {
         return bankDetailsService.updateBankDetails(bankId, bankDetailsDTO);
     }
 
     // Deleting bank details by bank ID
     @DeleteMapping("/{bankId}")
-    public void deleteBankDetails(@PathVariable int bankId) {
+    public void deleteBankDetails(@PathVariable String bankId) {
         bankDetailsService.deleteBankDetails(bankId);
     }
 }

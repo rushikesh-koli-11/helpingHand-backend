@@ -58,18 +58,18 @@ public class UpdatesServiceImpl implements UpdatesService {
 	}
 
 	@Override
-	public UpdatesDTO getUpdateById(int updateId) {
+	public UpdatesDTO getUpdateById(String updateId) {
 		Updates updates = updatesRepository.findById(updateId)
 				.orElseThrow(() -> new CustomExceptions(UserConstants.USER_NOT_FOUND));
 		return UpdatesMapper.toDTO(updates);
 	}
 	
 	@Override
-	public List<UpdatesDTO> getUpdatesByFundraiserId(int fundraiserId) {
+	public List<UpdatesDTO> getUpdatesByFundraiserId(String fundraiserId) {
 	    Fundraiser fundraiser = fundraiserRepository.findById(fundraiserId)
 	            .orElseThrow(() -> new CustomExceptions(FundraiserConstants.FUNDRAISER_NOT_FOUND + fundraiserId));
 
-	    return fundraiser.getUpdates().stream()
+	    return updatesRepository.findByFundraiserId(fundraiserId).stream()
 	            .map(UpdatesMapper::toDTO) // Convert each Updates entity to UpdatesDTO
 	            .collect(Collectors.toList()); // Collect into a List
 	}

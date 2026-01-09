@@ -56,21 +56,23 @@ public class BankDetailsServiceImpl implements BankDetailsService {
      * @return BankDetailsDTO
      */
     @Override
-    public BankDetailsDTO getBankDetailsByFundraiserId(int fundraiserId) {
-        // Checking if fundraiser exists
-        Fundraiser fundraiser = fundraiserRepository.findById(fundraiserId)
-                .orElseThrow(() -> new CustomExceptions(FundraiserConstants.FUNDRAISER_NOT_FOUND + fundraiserId));
+    public BankDetailsDTO getBankDetailsByFundraiserId(String fundraiserId) {
+        BankDetails bankDetails = bankDetailsRepository.findByFundraiserId(fundraiserId)
+                .orElse(null);
         
-        // Validating if fundraiser has associated bank details
-        if (fundraiser.getBankDetails() == null) {
+        if (bankDetails == null) {
             System.out.println(BankDetailsConstants.BANK_DETAILS_NOT_FOUND);
             return null;
         }
         
-        // Retrieving and returning bank details
-        return bankDetailsRepository.findById(fundraiser.getBankDetails().getBankId())
-                .map(bankDetailsMapper::toDTO)
-                .orElseThrow(() -> new CustomExceptions(BankDetailsConstants.BANK_DETAILS_NOT_FOUND + fundraiser.getBankDetails().getBankId()));
+        return bankDetailsMapper.toDTO(bankDetails);
+    }
+
+    @Override
+    public BankDetailsDTO getBankDetailsById(String bankId) {
+        BankDetails bankDetails = bankDetailsRepository.findById(bankId)
+                .orElseThrow(() -> new CustomExceptions(BankDetailsConstants.BANK_DETAILS_NOT_FOUND + bankId));
+        return bankDetailsMapper.toDTO(bankDetails);
     }
 
     /**
@@ -103,7 +105,7 @@ public class BankDetailsServiceImpl implements BankDetailsService {
      * @return Updated BankDetailsDTO
      */
     @Override
-    public BankDetailsDTO updateBankDetails(int bankId, BankDetailsDTO bankDetailsDTO) {
+    public BankDetailsDTO updateBankDetails(String bankId, BankDetailsDTO bankDetailsDTO) {
         // Checking if bank details exist
         BankDetails existingBankDetails = bankDetailsRepository.findById(bankId)
                 .orElseThrow(() -> new CustomExceptions(BankDetailsConstants.BANK_DETAILS_NOT_FOUND + bankId));
@@ -114,8 +116,10 @@ public class BankDetailsServiceImpl implements BankDetailsService {
         }
 
         // Updating bank details
-        existingBankDetails = bankDetailsMapper.toEntity(bankDetailsDTO);
-        existingBankDetails.setBankId(bankId);
+        existingBankDetails.setAccountNumber(bankDetailsDTO.getAccountNumber());
+        existingBankDetails.setIfscCode(bankDetailsDTO.getIfscCode());
+        existingBankDetails.setAccountHolderName(bankDetailsDTO.getAccountHolderName());
+        existingBankDetails.setBankName(bankDetailsDTO.getBankName());
         
         try {
             // Saving updated details
@@ -131,7 +135,7 @@ public class BankDetailsServiceImpl implements BankDetailsService {
      * @param bankId ID of the bank details to delete
      */
     @Override
-    public void deleteBankDetails(int bankId) {
+    public void deleteBankDetails(String bankId) {
         // Checking if bank details exist
         if (!bankDetailsRepository.existsById(bankId)) {
             throw new CustomExceptions(BankDetailsConstants.BANK_DETAILS_NOT_FOUND + bankId);

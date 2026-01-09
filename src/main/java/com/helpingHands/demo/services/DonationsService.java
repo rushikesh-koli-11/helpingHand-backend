@@ -6,11 +6,11 @@ import com.helpingHands.demo.entities.DonationStatus;
 import com.helpingHands.demo.globalException.Response;
 public interface DonationsService {
     Response<DonationsDTO>  saveDonation(DonationsDTO dto);
-    DonationsDTO getDonationById(int id);
-    List<DonationsDTO> getDonationsByUserId(int userId);
-    List<DonationsDTO> getDonationsByFundraiserId(int fundraiserId);
-    DonationsDTO getDonationDTO(int donationId);
-    public void updateDonationStatus(int donationId, DonationStatus status) ;
+    DonationsDTO getDonationById(String id);
+    List<DonationsDTO> getDonationsByUserId(String userId);
+    List<DonationsDTO> getDonationsByFundraiserId(String fundraiserId);
+    DonationsDTO getDonationDTO(String donationId);
+    public void updateDonationStatus(String donationId, DonationStatus status) ;
 }
 
 

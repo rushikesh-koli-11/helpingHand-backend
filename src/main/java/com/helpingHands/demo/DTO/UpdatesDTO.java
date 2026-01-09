@@ -13,9 +13,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdatesDTO {
-	
-	private int updateId;
-    private int fundraiserId;
+	private String updateId;
+    private String fundraiserId;
     private String content;
     private String createdAt;
 

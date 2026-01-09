@@ -6,8 +6,8 @@ import com.helpingHands.demo.DTO.SavedFundDTO;
 
 public interface SavedFundService {
 	SavedFundDTO saveFund(SavedFundDTO SavedFundDTO);
-    SavedFundDTO updateSavedFund(int saveId, SavedFundDTO SavedFundDTO);
-    SavedFundDTO getSavedFundById(int saveId);
+    SavedFundDTO updateSavedFund(String saveId, SavedFundDTO SavedFundDTO);
+    SavedFundDTO getSavedFundById(String saveId);
     List<SavedFundDTO> getAllSavedFunds();
-    void deleteSavedFund(int saveId);
+    void deleteSavedFund(String saveId);
 }

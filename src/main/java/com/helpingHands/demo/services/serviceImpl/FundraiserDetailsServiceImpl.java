@@ -10,9 +10,10 @@ import com.helpingHands.demo.globalException.Response;
 import com.helpingHands.demo.mapper.FundraiserDetailsMapper;
 import com.helpingHands.demo.repository.FundraiserDetailsRepository;
 import com.helpingHands.demo.repository.FundraiserRepository;
+import com.helpingHands.demo.services.CloudinaryService;
 import com.helpingHands.demo.services.FundraiserDetailsService;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,19 +22,16 @@ import java.util.List;
 
 /**
  * Handling fundraiser details like creating, updating, deleting, and fetching details 
- * related to fundraisers, including cover images and patient details.
+ * related to fundraisers, including cover images and patient details using Cloudinary.
  */
 @Service
+@RequiredArgsConstructor
 public class FundraiserDetailsServiceImpl implements FundraiserDetailsService {
 
-    @Autowired
-    private FundraiserDetailsRepository fundraiserDetailsRepository;
-
-    @Autowired
-    private FundraiserRepository fundraiserRepository;
-
-    @Autowired
-    private FundraiserDetailsMapper fundraiserDetailsMapper;
+    private final FundraiserDetailsRepository fundraiserDetailsRepository;
+    private final FundraiserRepository fundraiserRepository;
+    private final FundraiserDetailsMapper fundraiserDetailsMapper;
+    private final CloudinaryService cloudinaryService;
 
     /**
      * Creating fundraiser details by storing images, videos, and patient information.
@@ -50,20 +48,23 @@ public class FundraiserDetailsServiceImpl implements FundraiserDetailsService {
      * @throws IOException If there is an issue processing the image file.
      */
     @Override
-    public Response<FundraiserDetails> createFundraiserDetails(MultipartFile coverPicture, int fundraiserId,
+    public Response<FundraiserDetails> createFundraiserDetails(MultipartFile coverPicture, String fundraiserId,
             String videoAppeal, String patientName, Integer patientAge, String patientGender, String medicalCondition,
             String story) throws IOException {
         // Fetching the fundraiser by ID
         Fundraiser fundraiser = fundraiserRepository.findById(fundraiserId)
                 .orElseThrow(() -> new CustomExceptions(FundraiserConstants.FUNDRAISER_NOT_FOUND + fundraiserId));
 
-        // Converting image to byte array
-        byte[] coverImageBytes = (coverPicture != null) ? coverPicture.getBytes() : null;
+        // Uploading image to Cloudinary if provided
+        String coverImageUrl = null;
+        if (coverPicture != null && !coverPicture.isEmpty()) {
+            coverImageUrl = cloudinaryService.uploadFile(coverPicture, "fundraiser-covers");
+        }
 
         // Creating DTO with provided details
         FundraiserDetailsDTO dto = new FundraiserDetailsDTO();
         dto.setFundraiserId(fundraiserId);
-        dto.setCoverPicture(coverImageBytes);
+        dto.setCoverPicture(coverImageUrl);
         dto.setVideoAppeal(videoAppeal);
         dto.setRemainingAmount(fundraiser.getGoalAmount() - fundraiser.getCurrentAmount());
         dto.setPatientName(patientName);
@@ -74,7 +75,7 @@ public class FundraiserDetailsServiceImpl implements FundraiserDetailsService {
 
         // Converting DTO to entity and saving it
         FundraiserDetails fundraiserDetails = fundraiserDetailsMapper.toEntity(dto, fundraiser);
-        fundraiserDetails.setCoverPicture(coverImageBytes);
+        fundraiserDetails.setCoverPicture(coverImageUrl);
 
         return new Response<>(fundraiserDetailsRepository.save(fundraiserDetails));
     }
@@ -99,7 +100,7 @@ public class FundraiserDetailsServiceImpl implements FundraiserDetailsService {
      * @throws CustomExceptions If fundraiser details with the given ID are not found.
      */
     @Override
-    public FundraiserDetailsDTO getFundraiserDetailsById(int id) {
+    public FundraiserDetailsDTO getFundraiserDetailsById(String id) {
         FundraiserDetails entity = fundraiserDetailsRepository.findById(id)
                 .orElseThrow(() -> new CustomExceptions(FundraiserDetailsConstants.FUNDRAISER_DETAILS_NOT_FOUND + id));
         return fundraiserDetailsMapper.toDTO(entity);
@@ -112,7 +113,7 @@ public class FundraiserDetailsServiceImpl implements FundraiserDetailsService {
      * @throws CustomExceptions If fundraiser details with the given ID are not found.
      */
     @Override
-    public void deleteFundraiserDetails(int id) {
+    public void deleteFundraiserDetails(String id) {
         FundraiserDetails entity = fundraiserDetailsRepository.findById(id)
                 .orElseThrow(() -> new CustomExceptions(FundraiserDetailsConstants.FUNDRAISER_DETAILS_NOT_FOUND + id));
         fundraiserDetailsRepository.delete(entity);
@@ -127,7 +128,7 @@ public class FundraiserDetailsServiceImpl implements FundraiserDetailsService {
      * @throws CustomExceptions If fundraiser details with the given ID are not found.
      */
     @Override
-    public FundraiserDetailsDTO updateFundraiserDetails(int id, FundraiserDetailsDTO dto) {
+    public FundraiserDetailsDTO updateFundraiserDetails(String id, FundraiserDetailsDTO dto) {
         // Fetching existing details
         FundraiserDetails existingDetails = fundraiserDetailsRepository.findById(id)
                 .orElseThrow(() -> new CustomExceptions(FundraiserDetailsConstants.FUNDRAISER_DETAILS_NOT_FOUND + id));
@@ -173,7 +174,7 @@ public class FundraiserDetailsServiceImpl implements FundraiserDetailsService {
      * @throws CustomExceptions If fundraiser details with the given ID are not found.
      */
     @Override
-    public FundraiserDetailsDTO getCoverImageById(int id) {
+    public FundraiserDetailsDTO getCoverImageById(String id) {
         return fundraiserDetailsRepository.findById(id)
                 .map(fundraiserDetailsMapper::toDTO)
                 .orElseThrow(() -> new CustomExceptions(FundraiserDetailsConstants.FUNDRAISER_DETAILS_NOT_FOUND + id));

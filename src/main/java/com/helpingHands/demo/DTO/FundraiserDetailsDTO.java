@@ -10,12 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FundraiserDetailsDTO {
-
-	private int id;
-    private int fundraiserId; 
-    
-    private byte[] coverPicture;
-
+	private String id;
+    private String fundraiserId; 
+    private String coverPicture; // Cloudinary URL
     private String videoAppeal;
     private Double remainingAmount;
     private String patientName;
@@ -23,5 +20,4 @@ public class FundraiserDetailsDTO {
     private String patientGender;
     private String medicalCondition;
     private String story;
-
 }

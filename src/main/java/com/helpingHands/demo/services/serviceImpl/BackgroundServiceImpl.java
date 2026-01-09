@@ -47,15 +47,17 @@ public class BackgroundServiceImpl implements BackgroundService {
      * Retrieving background details by fundraiser ID.
      */
     @Override
-    public BackgroundDTO getBackgroundById(int fundraiserId) {
-        // Checking if fundraiser exists
-        Fundraiser fundraiser = fundraiserRepository.findById(fundraiserId)
-                .orElseThrow(() -> new CustomExceptions(FundraiserConstants.FUNDRAISER_NOT_FOUND + fundraiserId));
+    public BackgroundDTO getBackgroundById(String backgroundId) {
+        Background background = backgroundRepository.findById(backgroundId)
+                .orElseThrow(() -> new CustomExceptions(BackgroundConstants.BACKGROUND_NOT_FOUND + backgroundId));
+        
+        return backgroundMapper.toDTO(background);
+    }
 
-        // Retrieving background details
-        Background background = backgroundRepository.findById(fundraiser.getBackground().getBackgroundId())
-                .orElseThrow(() -> new CustomExceptions(
-                        BackgroundConstants.BACKGROUND_NOT_FOUND + fundraiser.getBackground().getBackgroundId()));
+    @Override
+    public BackgroundDTO getBackgroundByFundraiserId(String fundraiserId) {
+        Background background = backgroundRepository.findByFundraiserId(fundraiserId)
+                .orElseThrow(() -> new CustomExceptions(BackgroundConstants.BACKGROUND_NOT_FOUND + fundraiserId));
         
         return backgroundMapper.toDTO(background);
     }
@@ -64,7 +66,7 @@ public class BackgroundServiceImpl implements BackgroundService {
      * Deleting a background record by ID.
      */
     @Override
-    public void deleteBackground(int backgroundId) {
+    public void deleteBackground(String backgroundId) {
         // Checking if background exists before deletion
         if (!backgroundRepository.existsById(backgroundId)) {
             throw new CustomExceptions(BackgroundConstants.BACKGROUND_NOT_FOUND + backgroundId);
@@ -77,7 +79,7 @@ public class BackgroundServiceImpl implements BackgroundService {
      * Updating an existing background record.
      */
     @Override
-    public BackgroundDTO updateBackground(int id, BackgroundDTO backgroundDTO) {
+    public BackgroundDTO updateBackground(String id, BackgroundDTO backgroundDTO) {
         // Validating if background exists
         Background existingBackground = backgroundRepository.findById(id)
                 .orElseThrow(() -> new CustomExceptions(BackgroundConstants.BACKGROUND_NOT_FOUND + id));

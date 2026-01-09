@@ -6,9 +6,12 @@ import com.helpingHands.demo.entities.Updates;
 public class UpdatesMapper {
 
     public static UpdatesDTO toDTO(Updates updates) {
+        if (updates == null) {
+            return null;
+        }
         return UpdatesDTO.builder()
                 .updateId(updates.getUpdateId())
-                .fundraiserId(updates.getFundraiser().getId())
+                .fundraiserId(updates.getFundraiser() != null ? updates.getFundraiser().getId() : null)
                 .content(updates.getContent())
                 .createdAt(UpdatesDTO.formatDateTime(updates.getCreatedAt()))
                 .build();

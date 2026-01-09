@@ -6,8 +6,9 @@ import com.helpingHands.demo.entities.MedicalDocuments;
 import com.helpingHands.demo.exception.CustomExceptions;
 import com.helpingHands.demo.mapper.MedicalDocumentsMapper;
 import com.helpingHands.demo.repository.MedicalDocumentsRepository;
+import com.helpingHands.demo.services.CloudinaryService;
 import com.helpingHands.demo.services.MedicalDocumentsService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,45 +18,26 @@ import java.util.Optional;
 /**
  * Service implementation for managing medical documents.
  * This class provides functionality for uploading, retrieving, and updating medical documents
- * associated with fundraisers.
+ * associated with fundraisers using Cloudinary for file storage.
  */
 @Service
+@RequiredArgsConstructor
 public class MedicalDocumentsServiceImpl implements MedicalDocumentsService {
 
-    @Autowired
-    private MedicalDocumentsRepository medicalDocumentsRepository;
-
-    @Autowired
-    private MedicalDocumentsMapper medicalDocumentsMapper;
+    private final MedicalDocumentsRepository medicalDocumentsRepository;
+    private final MedicalDocumentsMapper medicalDocumentsMapper;
+    private final CloudinaryService cloudinaryService;
 
     /**
-     * Uploads medical documents by converting them to byte arrays and saving them in the database.
+     * Uploads medical documents by uploading them to Cloudinary and saving URLs in the database.
      *
      * @param dto The {@link MedicalDocumentsDTO} containing the documents to upload.
      * @return The uploaded documents as a {@link MedicalDocumentsDTO}.
-     * @throws CustomExceptions If there is an error during file conversion.
+     * @throws CustomExceptions If there is an error during file upload.
      */
     @Override
     public MedicalDocumentsDTO uploadDocuments(MedicalDocumentsDTO dto) {
-        try {
-            // Converting files to byte arrays if they are not null
-            if (dto.getMedicalEstimate() != null) {
-                dto.setMedicalEstimate(convertFileToByteArray(dto.getMedicalEstimate()));
-            }
-            if (dto.getConsentLetterFromPatient() != null) {
-                dto.setConsentLetterFromPatient(convertFileToByteArray(dto.getConsentLetterFromPatient()));
-            }
-            if (dto.getMedicalReports() != null) {
-                dto.setMedicalReports(convertFileToByteArray(dto.getMedicalReports()));
-            }
-            if (dto.getOtherDocs() != null) {
-                dto.setOtherDocs(convertFileToByteArray(dto.getOtherDocs()));
-            }
-        } catch (Exception e) {
-            // Throwing an exception if file conversion fails
-            throw new CustomExceptions(MedicalDocumentsConstants.FILE_CONVERSION_ERROR);
-        }
-
+        // Note: DTO should already contain Cloudinary URLs if files were uploaded via controller
         // Mapping the DTO to an entity and saving it in the database
         MedicalDocuments medicalDocuments = medicalDocumentsMapper.toEntity(dto);
         medicalDocuments = medicalDocumentsRepository.save(medicalDocuments);
@@ -71,8 +53,8 @@ public class MedicalDocumentsServiceImpl implements MedicalDocumentsService {
      * @return An {@link Optional} containing the {@link MedicalDocumentsDTO} if found, otherwise empty.
      */
     @Override
-    public Optional<MedicalDocumentsDTO> getMedicalDocumentsByFundraiserId(int fundraiserId) {
-        return medicalDocumentsRepository.findByFundraiser_Id(fundraiserId).map(medicalDocumentsMapper::toDTO);
+    public Optional<MedicalDocumentsDTO> getMedicalDocumentsByFundraiserId(String fundraiserId) {
+        return medicalDocumentsRepository.findByFundraiserId(fundraiserId).map(medicalDocumentsMapper::toDTO);
     }
 
     /**
@@ -88,23 +70,31 @@ public class MedicalDocumentsServiceImpl implements MedicalDocumentsService {
      * @throws CustomExceptions If the documents are not found or there is an error updating the files.
      */
     @Override
-    public MedicalDocumentsDTO updateDocuments(int fundraiserId, MultipartFile medicalEstimate,
+    public MedicalDocumentsDTO updateDocuments(String fundraiserId, MultipartFile medicalEstimate,
                                               MultipartFile consentLetterFromPatient, MultipartFile medicalReports,
                                               MultipartFile otherDocs, String additionalInformation) {
         // Retrieving the existing medical documents entity
-        MedicalDocuments entity = medicalDocumentsRepository.findByFundraiser_Id(fundraiserId).orElseThrow(
+        MedicalDocuments entity = medicalDocumentsRepository.findByFundraiserId(fundraiserId).orElseThrow(
                 () -> new CustomExceptions(MedicalDocumentsConstants.MEDICAL_DOCUMENTS_NOT_FOUND + fundraiserId));
 
         try {
-            // Updating the files if they are not null
-            if (medicalEstimate != null)
-                entity.setMedicalEstimate(medicalEstimate.getBytes());
-            if (consentLetterFromPatient != null)
-                entity.setConsentLetterFromPatient(consentLetterFromPatient.getBytes());
-            if (medicalReports != null)
-                entity.setMedicalReports(medicalReports.getBytes());
-            if (otherDocs != null)
-                entity.setOtherDocs(otherDocs.getBytes());
+            // Uploading files to Cloudinary if they are not null
+            if (medicalEstimate != null && !medicalEstimate.isEmpty()) {
+                String url = cloudinaryService.uploadFile(medicalEstimate, "medical-documents");
+                entity.setMedicalEstimate(url);
+            }
+            if (consentLetterFromPatient != null && !consentLetterFromPatient.isEmpty()) {
+                String url = cloudinaryService.uploadFile(consentLetterFromPatient, "medical-documents");
+                entity.setConsentLetterFromPatient(url);
+            }
+            if (medicalReports != null && !medicalReports.isEmpty()) {
+                String url = cloudinaryService.uploadFile(medicalReports, "medical-documents");
+                entity.setMedicalReports(url);
+            }
+            if (otherDocs != null && !otherDocs.isEmpty()) {
+                String url = cloudinaryService.uploadFile(otherDocs, "medical-documents");
+                entity.setOtherDocs(url);
+            }
         } catch (IOException e) {
             // Throwing an exception if there is an error updating the files
             throw new CustomExceptions(MedicalDocumentsConstants.FILE_UPDATE_ERROR);
@@ -118,15 +108,5 @@ public class MedicalDocumentsServiceImpl implements MedicalDocumentsService {
         // Saving the updated entity and returning it as a DTO
         entity = medicalDocumentsRepository.save(entity);
         return medicalDocumentsMapper.toDTO(entity);
-    }
-
-    /**
-     * Converts a file to a byte array.
-     *
-     * @param file The file to convert.
-     * @return The file as a byte array.
-     */
-    private byte[] convertFileToByteArray(byte[] file) {
-        return file;
     }
 }

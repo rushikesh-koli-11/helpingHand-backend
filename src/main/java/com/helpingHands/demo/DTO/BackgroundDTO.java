@@ -10,9 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BackgroundDTO {
-	
-	private int backgroundId;
-    private int fundraiserId;
+	private String backgroundId;
+    private String fundraiserId;
     private String relationWithPatient;
     private Double monthlyIncomeOfPatientsFamily;
 }

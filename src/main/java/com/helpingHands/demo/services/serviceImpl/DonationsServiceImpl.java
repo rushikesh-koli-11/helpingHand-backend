@@ -85,7 +85,7 @@ public class DonationsServiceImpl implements DonationsService {
      * @throws CustomExceptions If the donation is not found.
      */
     @Override
-    public DonationsDTO getDonationById(int id) {
+    public DonationsDTO getDonationById(String id) {
         Donations donation = donationRepository.findById(id)
                 .orElseThrow(() -> new CustomExceptions(DonationConstants.DONATION_NOT_FOUND + id));
         return donationMapper.toDTO(donation);
@@ -99,15 +99,14 @@ public class DonationsServiceImpl implements DonationsService {
      * @throws CustomExceptions If a database error occurs.
      */
     @Override
-    public List<DonationsDTO> getDonationsByUserId(int userId) {
+    public List<DonationsDTO> getDonationsByUserId(String userId) {
         try {
             List<Donations> donations = donationRepository.findAll().stream()
-                    .filter(x -> x.getUser().getUserId() == userId).collect(Collectors.toList());
+                    .filter(x -> x.getUser() != null && x.getUser().getUserId().equals(userId))
+                    .collect(Collectors.toList());
 
             return donations.stream()
-                    .map(donation -> new DonationsDTO(donation.getDonationId(), donation.getUser().getUserId(),
-                            donation.getFundraiser().getId(), donation.getAmount(),
-                            donation.getDonationDate().toString(), donation.getTransactionId(), donation.getStatus()))
+                    .map(donationMapper::toDTO)
                     .collect(Collectors.toList());
         } catch (Exception e) {
             throw new CustomExceptions(DonationConstants.DATABASE_ERROR);
@@ -122,15 +121,14 @@ public class DonationsServiceImpl implements DonationsService {
      * @throws CustomExceptions If a database error occurs.
      */
     @Override
-    public List<DonationsDTO> getDonationsByFundraiserId(int fundraiserId) {
+    public List<DonationsDTO> getDonationsByFundraiserId(String fundraiserId) {
         try {
             List<Donations> donations = donationRepository.findAll().stream()
-                    .filter(x -> x.getFundraiser().getId() == fundraiserId).collect(Collectors.toList());
+                    .filter(x -> x.getFundraiser() != null && x.getFundraiser().getId().equals(fundraiserId))
+                    .collect(Collectors.toList());
 
             return donations.stream()
-                    .map(donation -> new DonationsDTO(donation.getDonationId(), donation.getFundraiser().getId(),
-                            donation.getFundraiser().getId(), donation.getAmount(),
-                            donation.getDonationDate().toString(), donation.getTransactionId(), donation.getStatus()))
+                    .map(donationMapper::toDTO)
                     .collect(Collectors.toList());
         } catch (Exception e) {
             throw new CustomExceptions(DonationConstants.DATABASE_ERROR);
@@ -145,7 +143,7 @@ public class DonationsServiceImpl implements DonationsService {
      * @throws CustomExceptions If the donation is not found.
      */
     @Override
-    public DonationsDTO getDonationDTO(int donationId) {
+    public DonationsDTO getDonationDTO(String donationId) {
         Donations donation = donationRepository.findById(donationId)
                 .orElseThrow(() -> new CustomExceptions(DonationConstants.DONATION_NOT_FOUND + donationId));
         return donationMapper.toDTO(donation);
@@ -159,7 +157,7 @@ public class DonationsServiceImpl implements DonationsService {
      * @throws CustomExceptions If the donation is not found or a database error occurs.
      */
     @Override
-    public void updateDonationStatus(int donationId, DonationStatus status) {
+    public void updateDonationStatus(String donationId, DonationStatus status) {
         Donations donation = donationRepository.findById(donationId)
                 .orElseThrow(() -> new CustomExceptions(DonationConstants.DONATION_NOT_FOUND + donationId));
 
@@ -176,13 +174,23 @@ public class DonationsServiceImpl implements DonationsService {
                 String receiptContent = Files.readString(htmlPath);
 
                 // Replacing placeholders with actual data
-                receiptContent = receiptContent.replace("{{name}}", donation.getUser().getName());
-                receiptContent = receiptContent.replace("{{email}}", donation.getUser().getEmail());
-                receiptContent = receiptContent.replace("{{contactNumber}}", donation.getUser().getContactNumber());
-                receiptContent = receiptContent.replace("{{amount}}", donation.getAmount().toString());
-                receiptContent = receiptContent.replace("{{donationDate}}", donation.getDonationDate().toString());
-                receiptContent = receiptContent.replace("{{transactionId}}", donation.getTransactionId());
-                receiptContent = receiptContent.replace("{{fundraiserTitle}}", fundraiser.getFundraiserDetails().getPatientName());
+                if (donation.getUser() != null) {
+                    receiptContent = receiptContent.replace("{{name}}", donation.getUser().getName() != null ? donation.getUser().getName() : "");
+                    receiptContent = receiptContent.replace("{{email}}", donation.getUser().getEmail() != null ? donation.getUser().getEmail() : "");
+                    receiptContent = receiptContent.replace("{{contactNumber}}", donation.getUser().getContactNumber() != null ? donation.getUser().getContactNumber() : "");
+                } else {
+                    receiptContent = receiptContent.replace("{{name}}", "");
+                    receiptContent = receiptContent.replace("{{email}}", "");
+                    receiptContent = receiptContent.replace("{{contactNumber}}", "");
+                }
+                receiptContent = receiptContent.replace("{{amount}}", donation.getAmount() != null ? donation.getAmount().toString() : "0");
+                receiptContent = receiptContent.replace("{{donationDate}}", donation.getDonationDate() != null ? donation.getDonationDate().toString() : "");
+                receiptContent = receiptContent.replace("{{transactionId}}", donation.getTransactionId() != null ? donation.getTransactionId() : "");
+                if (fundraiser != null && fundraiser.getFundraiserDetails() != null) {
+                    receiptContent = receiptContent.replace("{{fundraiserTitle}}", fundraiser.getFundraiserDetails().getPatientName() != null ? fundraiser.getFundraiserDetails().getPatientName() : "");
+                } else {
+                    receiptContent = receiptContent.replace("{{fundraiserTitle}}", "");
+                }
                 receiptContent = receiptContent.replace("{{receiptNumber}}", "R-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
 
                 // Generating the PDF
@@ -205,14 +213,14 @@ public class DonationsServiceImpl implements DonationsService {
                         + "<body>"
                         + "<div class='container'>"
                         + "<h2>🙏 Thank You for Your Donation!</h2>"
-                        + "<p>Dear <strong>" + donation.getUser().getName() + "</strong>,</p>"
-                        + "<p>We sincerely appreciate your generous donation to <strong>" + fundraiser.getTitle() + "</strong>. "
+                        + "<p>Dear <strong>" + (donation.getUser() != null && donation.getUser().getName() != null ? donation.getUser().getName() : "Valued Donor") + "</strong>,</p>"
+                        + "<p>We sincerely appreciate your generous donation to <strong>" + (fundraiser != null && fundraiser.getTitle() != null ? fundraiser.getTitle() : "our cause") + "</strong>. "
                         + "Your support helps us make a difference! 🌍</p>"
                         + "<div class='details'>"
                         + "<h3>💡 Donation Details</h3>"
-                        + "<p><strong>💰 Amount:</strong> ₹" + donation.getAmount() + "</p>"
-                        + "<p><strong>🔗 Transaction ID:</strong> " + donation.getTransactionId() + "</p>"
-                        + "<p><strong>📅 Donation Date:</strong> " + donation.getDonationDate() + "</p>"
+                        + "<p><strong>💰 Amount:</strong> ₹" + (donation.getAmount() != null ? donation.getAmount() : "0") + "</p>"
+                        + "<p><strong>🔗 Transaction ID:</strong> " + (donation.getTransactionId() != null ? donation.getTransactionId() : "N/A") + "</p>"
+                        + "<p><strong>📅 Donation Date:</strong> " + (donation.getDonationDate() != null ? donation.getDonationDate() : "N/A") + "</p>"
                         + "</div>"
                         + "<p>Please find your <strong>Donation Receipt</strong> attached as a PDF.</p>"
                         + "<p>Thank you for your kindness and generosity! ❤️</p>"
@@ -225,7 +233,9 @@ public class DonationsServiceImpl implements DonationsService {
                         + "</html>";
 
                 // Sending the email with the PDF attachment
-                emailService.sendEmail(donation.getUser().getEmail(), subject, body, pdfAttachment, "Donation_Receipt.pdf");
+                if (donation.getUser() != null && donation.getUser().getEmail() != null) {
+                    emailService.sendEmail(donation.getUser().getEmail(), subject, body, pdfAttachment, "Donation_Receipt.pdf");
+                }
             }
 
             donationRepository.save(donation);

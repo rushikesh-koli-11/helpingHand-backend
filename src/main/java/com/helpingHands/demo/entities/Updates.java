@@ -2,39 +2,30 @@ package com.helpingHands.demo.entities;
 
 import java.time.LocalDateTime;
 
-import org.hibernate.annotations.CreationTimestamp;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
+@Document(collection = "updates")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "Updates")
 public class Updates {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int updateId;
+    private String updateId;
 
-    @ManyToOne
-    @JoinColumn(name = "fundraiserId")
+    @DBRef
     private Fundraiser fundraiser;
 
     private String content;
     
-    @CreationTimestamp
+    @CreatedDate
     private LocalDateTime createdAt;
-
 }
 

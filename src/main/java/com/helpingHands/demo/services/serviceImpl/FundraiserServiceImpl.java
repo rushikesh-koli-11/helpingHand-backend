@@ -77,9 +77,9 @@ public class FundraiserServiceImpl implements FundraiserService {
      * @return A list of DTOs representing all fundraisers except the given user's.
      */
     @Override
-    public List<FundraiserDTO> getAllFundraisersExceptUserId(Integer userId) {
+    public List<FundraiserDTO> getAllFundraisersExceptUserId(String userId) {
         return fundraiserRepository.findAll().stream()
-                .filter(fundraiser -> fundraiser.getUser().getUserId() != userId)
+                .filter(fundraiser -> fundraiser.getUser() != null && !fundraiser.getUser().getUserId().equals(userId))
                 .map(fundraiserMapper::toDTO)
                 .collect(Collectors.toList());
     }
@@ -92,7 +92,7 @@ public class FundraiserServiceImpl implements FundraiserService {
      * @throws CustomExceptions If the fundraiser with the given ID is not found.
      */
     @Override
-    public FundraiserDTO getFundraiserById(int fundraiserId) {
+    public FundraiserDTO getFundraiserById(String fundraiserId) {
         Fundraiser fundraiser = fundraiserRepository.findById(fundraiserId)
                 .orElseThrow(() -> new CustomExceptions(FundraiserConstants.FUNDRAISER_NOT_FOUND + fundraiserId));
         return fundraiserMapper.toDTO(fundraiser);
@@ -118,7 +118,7 @@ public class FundraiserServiceImpl implements FundraiserService {
      * @throws CustomExceptions If the fundraiser with the given ID does not exist.
      */
     @Override
-    public void deleteFundraiser(int fundraiserId) {
+    public void deleteFundraiser(String fundraiserId) {
         if (!fundraiserRepository.existsById(fundraiserId)) {
             throw new CustomExceptions(FundraiserConstants.FUNDRAISER_NOT_FOUND + fundraiserId);
         }
@@ -134,7 +134,7 @@ public class FundraiserServiceImpl implements FundraiserService {
      * @throws CustomExceptions If the fundraiser with the given ID is not found.
      */
     @Override
-    public void updateApprovalStatus(int fundraiserId, String status) {
+    public void updateApprovalStatus(String fundraiserId, String status) {
         // Fetching the fundraiser by ID.
         Fundraiser fundraiser = fundraiserRepository.findById(fundraiserId)
                 .orElseThrow(() -> new CustomExceptions(FundraiserConstants.FUNDRAISER_NOT_FOUND + fundraiserId));
@@ -143,10 +143,10 @@ public class FundraiserServiceImpl implements FundraiserService {
         fundraiser.setStatus(status);
 
         // Sending an email based on the approval status.
-        if ("approved".equals(fundraiser.getStatus())) {
+        if ("approved".equals(fundraiser.getStatus()) && fundraiser.getUser() != null && fundraiser.getUser().getEmail() != null) {
             emailService.sendEmail(fundraiser.getUser().getEmail(),
                                   "📢 Fundraiser Approved!",
-                                  "Dear " + fundraiser.getUser().getName() + ",\r\n"
+                                  "Dear " + (fundraiser.getUser().getName() != null ? fundraiser.getUser().getName() : "User") + ",\r\n"
                                   + "\r\n"
                                   + "We’re excited to inform you that your fund has been approved! 🎉 Your campaign is now live and ready to receive contributions.\r\n"
                                   + "\r\n"
@@ -156,10 +156,10 @@ public class FundraiserServiceImpl implements FundraiserService {
                                   + "\r\n"
                                   + "Best,\r\n"
                                   + "Helping Hands");
-        } else {
+        } else if (fundraiser.getUser() != null && fundraiser.getUser().getEmail() != null) {
             emailService.sendEmail(fundraiser.getUser().getEmail(),
                                   "⚠ Fundraiser Not Approved\r\n",
-                                  "Dear " + fundraiser.getUser().getName() + ",\r\n"
+                                  "Dear " + (fundraiser.getUser().getName() != null ? fundraiser.getUser().getName() : "User") + ",\r\n"
                                   + "\r\n"
                                   + "Thank you for submitting your fund. After careful review, we regret to inform you that we are unable to approve your fundraiser at this time due to missing details and policy guidelines.\r\n"
                                   + "\r\n"

@@ -11,9 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FundraiserDTO {
-
-	private int fundraiserId;
-	private int userId;
+	private String fundraiserId;
+	private String userId;
     private String title;
     private String description;
     private Double goalAmount;

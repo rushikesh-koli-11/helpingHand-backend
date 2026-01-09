@@ -11,10 +11,17 @@ import com.helpingHands.demo.entities.User;
 public class SavedFundMapper {
 	
 	public SavedFundDTO toDTO(SavedFund savedFund) {
+		if (savedFund == null) {
+			return null;
+		}
 		SavedFundDTO savedFundDTO = new SavedFundDTO();
 		savedFundDTO.setSaveId(savedFund.getSaveId());
-		savedFundDTO.setUserId(savedFund.getUser().getUserId());
-		savedFundDTO.setFundraiserId(savedFund.getFundraiser().getId());
+		if (savedFund.getUser() != null) {
+			savedFundDTO.setUserId(savedFund.getUser().getUserId());
+		}
+		if (savedFund.getFundraiser() != null) {
+			savedFundDTO.setFundraiserId(savedFund.getFundraiser().getId());
+		}
 		return savedFundDTO;
 	}
 	

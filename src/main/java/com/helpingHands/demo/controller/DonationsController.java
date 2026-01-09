@@ -38,28 +38,28 @@ public class DonationsController {
     
     // Getting a donation by its ID
     @GetMapping("/{donationId}")
-    public ResponseEntity<DonationsDTO> getDonationById(@PathVariable int donationId) {
+    public ResponseEntity<DonationsDTO> getDonationById(@PathVariable String donationId) {
         DonationsDTO donation = donationService.getDonationById(donationId);
         return ResponseEntity.ok(donation);
     }
     
     // Getting all donations made by a specific user
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<DonationsDTO>> getAllDonationsByUserId(@PathVariable int userId) {
+    public ResponseEntity<List<DonationsDTO>> getAllDonationsByUserId(@PathVariable String userId) {
         List<DonationsDTO> donations = donationService.getDonationsByUserId(userId);
         return ResponseEntity.ok(donations);
     }
     
     // Getting all donations made to a specific fundraiser
     @GetMapping("/fundraiser/{fundraiserId}")
-    public ResponseEntity<List<DonationsDTO>> getAllDonationsByFundraiserId(@PathVariable int fundraiserId) {
+    public ResponseEntity<List<DonationsDTO>> getAllDonationsByFundraiserId(@PathVariable String fundraiserId) {
         List<DonationsDTO> donations = donationService.getDonationsByFundraiserId(fundraiserId);
         return ResponseEntity.ok(donations);
     }
     
     // Marking a donation as SUCCESS
     @GetMapping("/success")
-    public ResponseEntity<String> markSuccess(@RequestParam int donationId) {
+    public ResponseEntity<String> markSuccess(@RequestParam String donationId) {
         try {
             donationService.updateDonationStatus(donationId, DonationStatus.SUCCESS);
             return ResponseEntity.ok("Donation marked as SUCCESS");
@@ -72,7 +72,7 @@ public class DonationsController {
 
     // Marking a donation as CANCEL
     @GetMapping("/cancel")
-    public ResponseEntity<String> markCancel(@RequestParam int donationId) {
+    public ResponseEntity<String> markCancel(@RequestParam String donationId) {
         try {
             donationService.updateDonationStatus(donationId, DonationStatus.CANCEL);
             return ResponseEntity.ok("Donation marked as CANCEL");

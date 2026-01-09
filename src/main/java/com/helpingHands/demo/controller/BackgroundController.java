@@ -32,20 +32,26 @@ public class BackgroundController {
 
     // Handling retrieving a background by ID
     @GetMapping("/{backgroundId}")
-    public BackgroundDTO getBackgroundById(@PathVariable int backgroundId) {
+    public BackgroundDTO getBackgroundById(@PathVariable String backgroundId) {
         return backgroundService.getBackgroundById(backgroundId);
+    }
+
+    // Getting background by fundraiser ID
+    @GetMapping("/fundraiser/{fundraiserId}")
+    public ResponseEntity<BackgroundDTO> getBackgroundByFundraiserId(@PathVariable String fundraiserId) {
+        return ResponseEntity.ok(backgroundService.getBackgroundByFundraiserId(fundraiserId));
     }
 
     // Handling deleting a background by ID
     @DeleteMapping("/{backgroundId}")
-    public void deleteBackground(@PathVariable int backgroundId) {
+    public void deleteBackground(@PathVariable String backgroundId) {
         backgroundService.deleteBackground(backgroundId);
     }
     
     // Handling updating a background by ID
     @PutMapping("/{backgroundId}")
     public ResponseEntity<BackgroundDTO> updateBackground(
-            @PathVariable int backgroundId, 
+            @PathVariable String backgroundId, 
             @RequestBody BackgroundDTO backgroundDTO) {
         BackgroundDTO updatedBackground = backgroundService.updateBackground(backgroundId, backgroundDTO);
         return ResponseEntity.ok(updatedBackground);

@@ -1,7 +1,6 @@
 package com.helpingHands.demo.controller;
 
 import java.io.IOException;
-import java.util.Base64;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -26,6 +25,7 @@ import com.helpingHands.demo.globalException.Response;
 import com.helpingHands.demo.mapper.FundraiserDetailsMapper;
 import com.helpingHands.demo.repository.FundraiserDetailsRepository;
 import com.helpingHands.demo.repository.FundraiserRepository;
+import com.helpingHands.demo.services.CloudinaryService;
 import com.helpingHands.demo.services.FundraiserDetailsService;
 
 import lombok.RequiredArgsConstructor;
@@ -40,11 +40,12 @@ public class FundraiserDetailsController {
     private final FundraiserDetailsRepository fundraiserDetailsRepository;
     private final FundraiserDetailsMapper fundraiserDetailsMapper;
     private final FundraiserRepository fundraiserRepository;
+    private final CloudinaryService cloudinaryService;
 
     // Creating fundraiser details with an optional cover picture
     @PostMapping
     public ResponseEntity<Response<FundraiserDetails>> createFundraiserDetails(
-            @RequestParam int fundraiserId, @RequestParam(value = "file", required = false) MultipartFile coverPicture,
+            @RequestParam String fundraiserId, @RequestParam(value = "file", required = false) MultipartFile coverPicture,
             @RequestParam String videoAppeal, @RequestParam String patientName, @RequestParam Integer patientAge,
             @RequestParam String patientGender, @RequestParam String medicalCondition, @RequestParam String story)
             throws IOException {
@@ -60,7 +61,7 @@ public class FundraiserDetailsController {
 
     // Getting fundraiser details by ID
     @GetMapping("/{id}")
-    public ResponseEntity<FundraiserDetailsDTO> getFundraiserDetailsById(@PathVariable int id) {
+    public ResponseEntity<FundraiserDetailsDTO> getFundraiserDetailsById(@PathVariable String id) {
     	FundraiserDetailsDTO fundraiserDetailsDTO = fundraiserDetailsService.getFundraiserDetailsById(id);
         if (fundraiserDetailsDTO == null) {
             return ResponseEntity.notFound().build();
@@ -70,43 +71,44 @@ public class FundraiserDetailsController {
 
     // Deleting fundraiser details by ID
     @DeleteMapping("/{id}")
-    public void deleteFundraiserDetails(@PathVariable int id) {
+    public void deleteFundraiserDetails(@PathVariable String id) {
         fundraiserDetailsService.deleteFundraiserDetails(id);
     }
 
     // Updating fundraiser details by fundraiser ID
     @PutMapping("/{fundraiserId}")
-    public ResponseEntity<FundraiserDetailsDTO> updateFundraiserDetails(@PathVariable int fundraiserId,
+    public ResponseEntity<FundraiserDetailsDTO> updateFundraiserDetails(@PathVariable String fundraiserId,
             @RequestBody FundraiserDetailsDTO dto) {
         return ResponseEntity.ok(fundraiserDetailsService.updateFundraiserDetails(fundraiserId, dto));
     }
 
-    // Downloading a cover picture as a Base64-encoded string
+    // Getting a cover picture URL
     @GetMapping("/download/{id}")
-    public ResponseEntity<String> downloadFileAsBase64(@PathVariable int id) {
+    public ResponseEntity<String> getCoverPictureUrl(@PathVariable String id) {
         FundraiserDetailsDTO fundraiserDetailsDTO = fundraiserDetailsService.getFundraiserDetailsById(id);
         if (fundraiserDetailsDTO != null && fundraiserDetailsDTO.getCoverPicture() != null) {
-            String base64Data = Base64.getEncoder().encodeToString(fundraiserDetailsDTO.getCoverPicture());
-            return ResponseEntity.ok().header("Content-Type", "application/json").body(base64Data);
+            return ResponseEntity.ok().header("Content-Type", "application/json").body(fundraiserDetailsDTO.getCoverPicture());
         }
         return ResponseEntity.notFound().build();
     }
 
     // Uploading a cover picture and updating fundraiser details
     @PutMapping("/upload")
-    public FundraiserDetailsDTO uploadFile(@RequestParam("file") MultipartFile coverPicture,
-            @RequestParam int fundraiserId, @RequestParam String videoAppeal, @RequestParam String patientName,
+    public FundraiserDetailsDTO uploadFile(@RequestParam(value = "file", required = false) MultipartFile coverPicture,
+            @RequestParam String fundraiserId, @RequestParam String videoAppeal, @RequestParam String patientName,
             @RequestParam Integer patientAge, @RequestParam String patientGender, @RequestParam String medicalCondition,
-            @RequestParam String story) {
+            @RequestParam String story) throws IOException {
 
         FundraiserDetails fundraiserDetails = fundraiserDetailsRepository.findByFundraiserId(fundraiserId)
-                .orElseThrow(() -> new RuntimeException("Fundraiser not found for ID: " + fundraiserId));
+                .orElseThrow(() -> new RuntimeException("Fundraiser details not found for ID: " + fundraiserId));
 
         Fundraiser fundraiser = fundraiserRepository.findById(fundraiserId)
                 .orElseThrow(() -> new CustomExceptions(FundraiserConstants.FUNDRAISER_NOT_FOUND + fundraiserId));
 
         if (coverPicture != null && !coverPicture.isEmpty()) {
-            fundraiserDetails.setCoverPicture(convertFileToByteArray(coverPicture));
+            // Upload to Cloudinary
+            String imageUrl = cloudinaryService.uploadFile(coverPicture, "fundraiser-covers");
+            fundraiserDetails.setCoverPicture(imageUrl);
         }
 
         fundraiserDetails.setVideoAppeal(videoAppeal);
@@ -120,25 +122,5 @@ public class FundraiserDetailsController {
         FundraiserDetails updatedFundraiser = fundraiserDetailsRepository.save(fundraiserDetails);
 
         return fundraiserDetailsMapper.toDTO(updatedFundraiser);
-    }
-
-    // Converting a Base64 string to an image
-    @PostMapping("/convert-to-image")
-    public ResponseEntity<byte[]> convertBase64ToImage(@RequestBody String base64Data) {
-        try {
-            byte[] imageBytes = Base64.getDecoder().decode(base64Data);
-            return ResponseEntity.ok().header("Content-Type", "image/jpeg").body(imageBytes);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(null);
-        }
-    }
-
-    // Converting a MultipartFile to a byte array
-    private byte[] convertFileToByteArray(MultipartFile file) {
-        try {
-            return file.getBytes();
-        } catch (IOException e) {
-            throw new RuntimeException("Error converting file to byte array", e);
-        }
     }
 }

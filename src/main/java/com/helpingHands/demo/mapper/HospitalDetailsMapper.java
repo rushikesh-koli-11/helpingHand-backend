@@ -39,7 +39,7 @@ public class HospitalDetailsMapper {
         dto.setDoctorPhoneNumber(entity.getDoctorPhoneNumber());
         dto.setHospitalAddress(entity.getHospitalAddress());
         dto.setAdditionalInformation(entity.getAdditionalInformation());
-        dto.setFundraiserId(entity.getFundraiser() != null ? entity.getFundraiser().getId() : 0); // Handle potential null fundraiser
+        dto.setFundraiserId(entity.getFundraiser() != null ? entity.getFundraiser().getId() : null); // Handle potential null fundraiser
         return dto;
     }
 

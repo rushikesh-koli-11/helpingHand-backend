@@ -1,45 +1,28 @@
 package com.helpingHands.demo.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
+@Document(collection = "medical_documents")
 @Data
 @Builder
-@Table(name = "MedicalDocuments")
 @NoArgsConstructor
 @AllArgsConstructor
 public class MedicalDocuments {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int medicalDocumentId;
+    @Id
+    private String medicalDocumentId;
 
-	@ManyToOne
-	@JoinColumn(name = "fundraiserId")
-	private Fundraiser fundraiser;
+    @DBRef
+    private Fundraiser fundraiser;
 
-	@Lob
-	private byte[] medicalEstimate;
-	
-	@Lob
-	private byte[] consentLetterFromPatient;
-	
-	@Lob
-	private byte[] medicalReports;
-	
-	@Lob
-	private byte[] otherDocs;
-	
-	private String additionalInformation;
-
+    private String medicalEstimate; // Cloudinary URL
+    private String consentLetterFromPatient; // Cloudinary URL
+    private String medicalReports; // Cloudinary URL
+    private String otherDocs; // Cloudinary URL
+    private String additionalInformation;
 }

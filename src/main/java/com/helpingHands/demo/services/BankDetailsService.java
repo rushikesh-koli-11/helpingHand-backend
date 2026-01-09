@@ -7,9 +7,10 @@ import com.helpingHands.demo.DTO.BankDetailsDTO;
 public interface BankDetailsService {
 
     List<BankDetailsDTO> getAllBankDetails();
-    BankDetailsDTO getBankDetailsByFundraiserId(int bankId);
+    BankDetailsDTO getBankDetailsByFundraiserId(String fundraiserId);
+    BankDetailsDTO getBankDetailsById(String bankId);
     BankDetailsDTO createBankDetails(BankDetailsDTO bankDetailsDTO);
-    BankDetailsDTO updateBankDetails(int bankId, BankDetailsDTO bankDetailsDTO);
-    void deleteBankDetails(int bankId);
+    BankDetailsDTO updateBankDetails(String bankId, BankDetailsDTO bankDetailsDTO);
+    void deleteBankDetails(String bankId);
 }
 

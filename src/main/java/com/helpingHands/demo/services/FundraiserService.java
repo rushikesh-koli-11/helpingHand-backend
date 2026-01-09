@@ -8,9 +8,9 @@ public interface FundraiserService {
 
 	FundraiserDTO createFundraiser(FundraiserDTO fundraiserDTO);
     List<FundraiserDTO> getAllFundraisers();
-    FundraiserDTO getFundraiserById(int fundraiserId);
-    void deleteFundraiser(int fundraiserId);
+    FundraiserDTO getFundraiserById(String fundraiserId);
+    void deleteFundraiser(String fundraiserId);
     FundraiserDTO getLatestFundraiser();
-    void updateApprovalStatus(int fundraiserId, String status);
-    public List<FundraiserDTO> getAllFundraisersExceptUserId(Integer userId);
+    void updateApprovalStatus(String fundraiserId, String status);
+    public List<FundraiserDTO> getAllFundraisersExceptUserId(String userId);
 }

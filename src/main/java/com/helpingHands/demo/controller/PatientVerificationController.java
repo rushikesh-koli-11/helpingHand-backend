@@ -41,20 +41,20 @@ public class PatientVerificationController {
 
     // Getting a patient verification by fundraiser ID
     @GetMapping("/{fundraiserId}")
-    public ResponseEntity<PatientVerificationDTO> getPatientVerificationById(@PathVariable int fundraiserId) {
+    public ResponseEntity<PatientVerificationDTO> getPatientVerificationById(@PathVariable String fundraiserId) {
         return ResponseEntity.ok(patientVerificationService.getPatientVerificationByfundraiserId(fundraiserId));
     }
 
     // Deleting a patient verification by ID
     @DeleteMapping("/{id}")
-    public void deletePatientVerification(@PathVariable int id) {
+    public void deletePatientVerification(@PathVariable String id) {
         patientVerificationService.deletePatientVerification(id);
     }
 
     // Updating a patient verification by ID
     @PutMapping("/{id}")
     public ResponseEntity<PatientVerificationDTO> updatePatientVerification(
-            @PathVariable int id, 
+            @PathVariable String id, 
             @RequestBody PatientVerificationDTO dto) {
         PatientVerificationDTO updatedDto = patientVerificationService.updatePatientVerification(id, dto);
         return ResponseEntity.ok(updatedDto);

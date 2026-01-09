@@ -38,13 +38,13 @@ public class UpdatesController {
     }
 
     @GetMapping("/{updateId}")
-    public ResponseEntity<UpdatesDTO> getUpdateById(@PathVariable int updateId) {
+    public ResponseEntity<UpdatesDTO> getUpdateById(@PathVariable String updateId) {
         UpdatesDTO update = updatesService.getUpdateById(updateId);
         return ResponseEntity.ok(update);
     }
     
     @GetMapping("/fundraiser/{fundraiserId}")
-    public ResponseEntity<List<UpdatesDTO>> getUpdatesByFundraiserId(@PathVariable int fundraiserId) {
+    public ResponseEntity<List<UpdatesDTO>> getUpdatesByFundraiserId(@PathVariable String fundraiserId) {
         return ResponseEntity.ok(updatesService.getUpdatesByFundraiserId(fundraiserId));
     }
 	

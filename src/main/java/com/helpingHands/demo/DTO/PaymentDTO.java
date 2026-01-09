@@ -12,16 +12,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PaymentDTO {
-
-	private int id;
+	private String id;
 	private String title;
-	private int fundraiserId;
+	private String fundraiserId;
 	private Long amount;
-	private int userId;
+	private String userId;
 	private String currency;
 	private String paymentStatus;
 	private String transactionId;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
-
 }

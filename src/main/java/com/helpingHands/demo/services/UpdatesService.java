@@ -8,6 +8,6 @@ public interface UpdatesService {
 	
 	UpdatesDTO postUpdate(UpdatesDTO updatesDTO);
 	List<UpdatesDTO> getAllUpdates();
-	UpdatesDTO getUpdateById(int updateId);
-	List<UpdatesDTO> getUpdatesByFundraiserId(int fundraiserId);
+	UpdatesDTO getUpdateById(String updateId);
+	List<UpdatesDTO> getUpdatesByFundraiserId(String fundraiserId);
 }

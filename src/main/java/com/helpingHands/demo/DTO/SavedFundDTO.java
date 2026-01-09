@@ -10,8 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SavedFundDTO {
-	
-	private int saveId;
-	private int userId;
-	private int fundraiserId;
+	private String saveId;
+	private String userId;
+	private String fundraiserId;
 }

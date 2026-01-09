@@ -70,7 +70,7 @@ public class SavedFundServiceImpl implements SavedFundService {
      * @return The updated saved fund as a DTO.
      */
     @Override
-    public SavedFundDTO updateSavedFund(int saveId, SavedFundDTO SavedFundDTO) {
+    public SavedFundDTO updateSavedFund(String saveId, SavedFundDTO SavedFundDTO) {
         SavedFund SavedFund = repository.findById(saveId).orElseThrow();
         User user = userRepository.findById(SavedFundDTO.getUserId()).orElseThrow();
         Fundraiser fundraiser = fundraiserRepository.findById(SavedFundDTO.getFundraiserId()).orElseThrow();
@@ -85,7 +85,7 @@ public class SavedFundServiceImpl implements SavedFundService {
      * @return The saved fund as a DTO.
      */
     @Override
-    public SavedFundDTO getSavedFundById(int saveId) {
+    public SavedFundDTO getSavedFundById(String saveId) {
         return repository.findById(saveId)
             .map(savedFundMapper::toDTO)
             .orElseThrow();
@@ -107,7 +107,7 @@ public class SavedFundServiceImpl implements SavedFundService {
      * @param saveId The ID of the saved fund to be deleted.
      */
     @Override
-    public void deleteSavedFund(int saveId) {
+    public void deleteSavedFund(String saveId) {
         repository.deleteById(saveId);
     }
 }

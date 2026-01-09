@@ -34,7 +34,7 @@ public class PDFReceiptController {
 
     // Generating a PDF receipt for a donation
     @GetMapping("/generate/{donationId}")
-    public ResponseEntity<byte[]> generateReceipt(@PathVariable int donationId) throws Exception {
+    public ResponseEntity<byte[]> generateReceipt(@PathVariable String donationId) throws Exception {
         // Fetching donation details by donation ID
         DonationsDTO donation = donationsService.getDonationById(donationId);
 

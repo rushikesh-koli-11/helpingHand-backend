@@ -68,11 +68,11 @@ public class PatientVerificationServiceImpl implements PatientVerificationServic
      * @throws CustomExceptions If the fundraiser is not found.
      */
     @Override
-    public PatientVerificationDTO getPatientVerificationByfundraiserId(int fundraiserId) {
-        Fundraiser fundraiser = fundraiserRepository.findById(fundraiserId)
+    public PatientVerificationDTO getPatientVerificationByfundraiserId(String fundraiserId) {
+        PatientVerification patientVerification = patientVerificationRepository.findByFundraiserId(fundraiserId)
                 .orElseThrow(() -> new CustomExceptions(FundraiserConstants.FUNDRAISER_NOT_FOUND + fundraiserId));
 
-        return patientVerificationMapper.toDTO(fundraiser.getPatientVerification());
+        return patientVerificationMapper.toDTO(patientVerification);
     }
 
     /**
@@ -81,7 +81,7 @@ public class PatientVerificationServiceImpl implements PatientVerificationServic
      * @param id The ID of the patient verification to delete.
      */
     @Override
-    public void deletePatientVerification(int id) {
+    public void deletePatientVerification(String id) {
         patientVerificationRepository.deleteById(id);
     }
 
@@ -94,7 +94,7 @@ public class PatientVerificationServiceImpl implements PatientVerificationServic
      * @throws CustomExceptions If the patient verification or associated fundraiser is not found.
      */
     @Override
-    public PatientVerificationDTO updatePatientVerification(int id, PatientVerificationDTO dto) {
+    public PatientVerificationDTO updatePatientVerification(String id, PatientVerificationDTO dto) {
         PatientVerification existingPatientVerification = patientVerificationRepository
                 .findById(id)
                 .orElseThrow(() -> new CustomExceptions(PatientVerificationConstants.PATIENT_VERIFICATION_NOT_FOUND + id));

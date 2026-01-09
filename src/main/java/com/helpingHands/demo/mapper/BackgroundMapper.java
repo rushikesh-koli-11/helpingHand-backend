@@ -16,7 +16,9 @@ public class BackgroundMapper {
     	
         BackgroundDTO dto = new BackgroundDTO();
         dto.setBackgroundId(background.getBackgroundId());
-        dto.setFundraiserId(background.getFundraiser().getId());
+        if (background.getFundraiser() != null) {
+            dto.setFundraiserId(background.getFundraiser().getId());
+        }
         dto.setRelationWithPatient(background.getRelationWithPatient());
         dto.setMonthlyIncomeOfPatientsFamily(background.getMonthlyIncomeOfPatientsFamily());
         return dto;

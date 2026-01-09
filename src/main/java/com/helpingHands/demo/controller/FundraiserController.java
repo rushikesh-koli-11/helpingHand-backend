@@ -41,13 +41,13 @@ public class FundraiserController {
 
     // Getting a fundraiser by its ID
     @GetMapping("/{fundraiserId}")
-    public FundraiserDTO getFundraiserById(@PathVariable int fundraiserId) {
+    public FundraiserDTO getFundraiserById(@PathVariable String fundraiserId) {
         return fundraiserService.getFundraiserById(fundraiserId);
     }
     
     // Getting all fundraisers except those created by a specific user
     @GetMapping("/view-fundraisers/{userId}")
-    public List<FundraiserDTO> getAllFundraisersExceptUserId(@PathVariable Integer userId) {
+    public List<FundraiserDTO> getAllFundraisersExceptUserId(@PathVariable String userId) {
         return fundraiserService.getAllFundraisersExceptUserId(userId);
     }
     
@@ -60,14 +60,14 @@ public class FundraiserController {
 
     // Deleting a fundraiser by its ID
     @DeleteMapping("/{fundraiserId}")
-    public void deleteFundraiser(@PathVariable int fundraiserId) {
+    public void deleteFundraiser(@PathVariable String fundraiserId) {
         fundraiserService.deleteFundraiser(fundraiserId);
     }
     
     // Approving or rejecting a fundraiser
     @PatchMapping("/{fundraiserId}/approval")
     public ResponseEntity<String> approveOrRejectFundraiser(
-            @PathVariable int fundraiserId,
+            @PathVariable String fundraiserId,
             @RequestBody Map<String, String> requestBody) {
         String status = requestBody.get("status");
         try {

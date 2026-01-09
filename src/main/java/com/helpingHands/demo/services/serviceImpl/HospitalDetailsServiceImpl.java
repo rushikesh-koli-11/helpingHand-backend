@@ -59,17 +59,22 @@ public class HospitalDetailsServiceImpl implements HospitalDetailsService {
      * @throws CustomExceptions If the fundraiser or hospital details are not found.
      */
     @Override
-    public HospitalDetailsDTO getHospitalDetailsByFundraiserId(int fundraiserId) {
-        Fundraiser hospitalDetailsByFundraiserId = fundraiserRepository.findById(fundraiserId)
-                .orElseThrow(() -> new CustomExceptions(FundraiserConstants.FUNDRAISER_NOT_FOUND + fundraiserId));
+    public HospitalDetailsDTO getHospitalDetailsByFundraiserId(String fundraiserId) {
+        HospitalDetails hospitalDetails = hospitalDetailsRepository.findByFundraiserId(fundraiserId)
+                .orElse(null);
 
-        if (hospitalDetailsByFundraiserId.getHospitalDetails() == null) {
+        if (hospitalDetails == null) {
             System.out.println(HospitalDetailsConstants.HOSPITAL_DETAILS_NOT_FOUND + fundraiserId);
             return null;
         }
 
-        HospitalDetails hospitalDetails = hospitalDetailsRepository.findById(hospitalDetailsByFundraiserId.getHospitalDetails().getId())
-                .orElseThrow(() -> new CustomExceptions(FundraiserConstants.FUNDRAISER_NOT_FOUND + fundraiserId));
+        return hospitalDetailsMapper.toDTO(hospitalDetails);
+    }
+
+    @Override
+    public HospitalDetailsDTO getHospitalDetailsById(String id) {
+        HospitalDetails hospitalDetails = hospitalDetailsRepository.findById(id)
+                .orElseThrow(() -> new CustomExceptions(HospitalDetailsConstants.HOSPITAL_DETAILS_NOT_FOUND + id));
         return hospitalDetailsMapper.toDTO(hospitalDetails);
     }
 
@@ -95,7 +100,7 @@ public class HospitalDetailsServiceImpl implements HospitalDetailsService {
      * @throws CustomExceptions If the hospital details are not found.
      */
     @Override
-    public HospitalDetailsDTO updateHospitalDetails(int id, HospitalDetailsDTO hospitalDetailsDTO) {
+    public HospitalDetailsDTO updateHospitalDetails(String id, HospitalDetailsDTO hospitalDetailsDTO) {
         HospitalDetails hospitalDetails = hospitalDetailsRepository.findById(id)
                 .orElseThrow(() -> new CustomExceptions(HospitalDetailsConstants.HOSPITAL_DETAILS_NOT_FOUND + id));
 
@@ -116,7 +121,7 @@ public class HospitalDetailsServiceImpl implements HospitalDetailsService {
      * @param id The ID of the hospital details to delete.
      */
     @Override
-    public void deleteHospitalDetails(int id) {
+    public void deleteHospitalDetails(String id) {
         hospitalDetailsRepository.deleteById(id);
     }
 }

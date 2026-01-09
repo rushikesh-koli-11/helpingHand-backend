@@ -6,9 +6,10 @@ import com.helpingHands.demo.DTO.HospitalDetailsDTO;
 
 public interface HospitalDetailsService {
 	HospitalDetailsDTO createHospitalDetails(HospitalDetailsDTO hospitalDetailsDTO);
-    HospitalDetailsDTO getHospitalDetailsByFundraiserId(int id);
+    HospitalDetailsDTO getHospitalDetailsByFundraiserId(String id);
+    HospitalDetailsDTO getHospitalDetailsById(String id);
     List<HospitalDetailsDTO> getAllHospitalDetails(); 
-    void deleteHospitalDetails(int id);
-    HospitalDetailsDTO updateHospitalDetails(int id, HospitalDetailsDTO hospitalDetailsDTO);
+    void deleteHospitalDetails(String id);
+    HospitalDetailsDTO updateHospitalDetails(String id, HospitalDetailsDTO hospitalDetailsDTO);
 }
 

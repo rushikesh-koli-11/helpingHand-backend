@@ -17,7 +17,7 @@ public class MedicalDocumentsMapper {
 
 	    return MedicalDocumentsDTO.builder()
 	            .medicalDocumentId(medicalDocuments.getMedicalDocumentId())
-	            .fundraiserId(medicalDocuments.getFundraiser().getId())
+	            .fundraiserId(medicalDocuments.getFundraiser() != null ? medicalDocuments.getFundraiser().getId() : null)
 	            .medicalEstimate(medicalDocuments.getMedicalEstimate())
 	            .consentLetterFromPatient(medicalDocuments.getConsentLetterFromPatient())
 	            .medicalReports(medicalDocuments.getMedicalReports())

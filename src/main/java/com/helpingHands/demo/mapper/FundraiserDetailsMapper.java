@@ -14,7 +14,7 @@ public class FundraiserDetailsMapper {
 	    }
 	    FundraiserDetailsDTO dto = new FundraiserDetailsDTO();
 	    dto.setId(entity.getId());
-	    dto.setFundraiserId(entity.getFundraiser() != null ? entity.getFundraiser().getId() : 0); // Avoid NPE
+	    dto.setFundraiserId(entity.getFundraiser() != null ? entity.getFundraiser().getId() : null); // Avoid NPE
 	    dto.setCoverPicture(entity.getCoverPicture());
 	    dto.setVideoAppeal(entity.getVideoAppeal());
 	    dto.setRemainingAmount(entity.getRemainingAmount());

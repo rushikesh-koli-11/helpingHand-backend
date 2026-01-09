@@ -9,14 +9,13 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class MedicalDocumentsDTO {
-    private int medicalDocumentId;
-    private int fundraiserId;
-    private byte[] medicalEstimate;
-    private byte[] consentLetterFromPatient;
-    private byte[] medicalReports;
-    private byte[] otherDocs;
+    private String medicalDocumentId;
+    private String fundraiserId;
+    private String medicalEstimate; // Cloudinary URL
+    private String consentLetterFromPatient; // Cloudinary URL
+    private String medicalReports; // Cloudinary URL
+    private String otherDocs; // Cloudinary URL
     private String additionalInformation;
 }
 

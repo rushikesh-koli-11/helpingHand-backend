@@ -10,9 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PatientVerificationDTO {
-
-	private int verificationId;
-    private int fundraiserId;
+	private String verificationId;
+    private String fundraiserId;
     private Long adhaarNumber; 
     private String panNumber;
 }

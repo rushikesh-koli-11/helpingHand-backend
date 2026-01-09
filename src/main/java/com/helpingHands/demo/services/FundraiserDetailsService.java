@@ -10,20 +10,19 @@ import com.helpingHands.demo.entities.FundraiserDetails;
 import com.helpingHands.demo.globalException.Response;
 
 public interface FundraiserDetailsService {
-//	FundraiserDetailsDTO createFundraiserDetails(FundraiserDetailsDTO dto);
 	List<FundraiserDetailsDTO> getAllFundraiserDetails();
 
-	FundraiserDetailsDTO getFundraiserDetailsById(int id);
+	FundraiserDetailsDTO getFundraiserDetailsById(String id);
 
-	void deleteFundraiserDetails(int id);
+	void deleteFundraiserDetails(String id);
 
-	FundraiserDetailsDTO updateFundraiserDetails(int id, FundraiserDetailsDTO dto);
+	FundraiserDetailsDTO updateFundraiserDetails(String id, FundraiserDetailsDTO dto);
 
-	FundraiserDetailsDTO getCoverImageById(int id);
+	FundraiserDetailsDTO getCoverImageById(String id);
 
 	void saveCoverImage(FundraiserDetailsDTO fundraiserDetailsDTO);
 
-	Response<FundraiserDetails> createFundraiserDetails(MultipartFile coverPicture, int fundraiserId,
+	Response<FundraiserDetails> createFundraiserDetails(MultipartFile coverPicture, String fundraiserId,
 			String videoAppeal, String patientName, Integer patientAge, String patientGender, String medicalCondition,
 			String story) throws IOException;
 }

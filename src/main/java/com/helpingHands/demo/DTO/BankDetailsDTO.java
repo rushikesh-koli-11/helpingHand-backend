@@ -10,13 +10,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BankDetailsDTO {
-	 	private int bankId;
-	    private int fundraiserId;  
-	    private String bankName;
-	    private String accountHolderName;
-	    private String accountNumber;
-	    private String ifscCode;
-	    private String accountType;  
-	    private String branchName;
-	    private String branchAddress;
+	private String bankId;
+    private String fundraiserId;  
+    private String bankName;
+    private String accountHolderName;
+    private String accountNumber;
+    private String ifscCode;
+    private String accountType;  
+    private String branchName;
+    private String branchAddress;
 }

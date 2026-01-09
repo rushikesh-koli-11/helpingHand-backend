@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.helpingHands.demo.DTO.MedicalDocumentsDTO;
+import com.helpingHands.demo.services.CloudinaryService;
 import com.helpingHands.demo.services.MedicalDocumentsService;
 
 import lombok.RequiredArgsConstructor;
@@ -26,32 +27,37 @@ import lombok.RequiredArgsConstructor;
 public class MedicalDocumentsController {
 
     private final MedicalDocumentsService medicalDocumentsService;
+    private final CloudinaryService cloudinaryService;
 
     // Uploading medical documents for a fundraiser
     @PostMapping("/upload")
     public ResponseEntity<MedicalDocumentsDTO> uploadMedicalDocuments(
-        @RequestParam MultipartFile medicalEstimate,
-        @RequestParam("consentLetterFromPatient") MultipartFile consentLetterFromPatient,
-        @RequestParam("medicalReports") MultipartFile medicalReports,
-        @RequestParam("otherDocs") MultipartFile otherDocs,
+        @RequestParam(required = false) MultipartFile medicalEstimate,
+        @RequestParam(value = "consentLetterFromPatient", required = false) MultipartFile consentLetterFromPatient,
+        @RequestParam(value = "medicalReports", required = false) MultipartFile medicalReports,
+        @RequestParam(value = "otherDocs", required = false) MultipartFile otherDocs,
         @RequestParam("additionalInformation") String additionalInformation,
-        @RequestParam("fundraiserId") int fundraiserId
-    ) {
-        // Creating a DTO object and mapping the uploaded files and fields
+        @RequestParam("fundraiserId") String fundraiserId
+    ) throws IOException {
+        // Creating a DTO object and uploading files to Cloudinary
         MedicalDocumentsDTO dto = new MedicalDocumentsDTO();
         dto.setFundraiserId(fundraiserId);
 
-        if (medicalEstimate != null) {
-            dto.setMedicalEstimate(convertFileToByteArray(medicalEstimate));
+        if (medicalEstimate != null && !medicalEstimate.isEmpty()) {
+            String url = cloudinaryService.uploadFile(medicalEstimate, "medical-documents");
+            dto.setMedicalEstimate(url);
         }
-        if (consentLetterFromPatient != null) {
-            dto.setConsentLetterFromPatient(convertFileToByteArray(consentLetterFromPatient));
+        if (consentLetterFromPatient != null && !consentLetterFromPatient.isEmpty()) {
+            String url = cloudinaryService.uploadFile(consentLetterFromPatient, "medical-documents");
+            dto.setConsentLetterFromPatient(url);
         }
-        if (medicalReports != null) {
-            dto.setMedicalReports(convertFileToByteArray(medicalReports));
+        if (medicalReports != null && !medicalReports.isEmpty()) {
+            String url = cloudinaryService.uploadFile(medicalReports, "medical-documents");
+            dto.setMedicalReports(url);
         }
-        if (otherDocs != null) {
-            dto.setOtherDocs(convertFileToByteArray(otherDocs));
+        if (otherDocs != null && !otherDocs.isEmpty()) {
+            String url = cloudinaryService.uploadFile(otherDocs, "medical-documents");
+            dto.setOtherDocs(url);
         }
         dto.setAdditionalInformation(additionalInformation);
 
@@ -62,7 +68,7 @@ public class MedicalDocumentsController {
 
     // Fetching medical documents by fundraiser ID
     @GetMapping("/fetch/{fundraiserId}")
-    public ResponseEntity<MedicalDocumentsDTO> getMedicalDocuments(@PathVariable int fundraiserId) {
+    public ResponseEntity<MedicalDocumentsDTO> getMedicalDocuments(@PathVariable String fundraiserId) {
         Optional<MedicalDocumentsDTO> dtoOptional = medicalDocumentsService.getMedicalDocumentsByFundraiserId(fundraiserId);
         return dtoOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -70,24 +76,15 @@ public class MedicalDocumentsController {
     // Updating medical documents for a fundraiser
     @PutMapping("/update/{fundraiserId}")
     public ResponseEntity<MedicalDocumentsDTO> updateMedicalDocuments(
-        @PathVariable int fundraiserId,
-        @RequestParam MultipartFile medicalEstimate,
-        @RequestParam MultipartFile consentLetterFromPatient,
-        @RequestParam MultipartFile medicalReports,
-        @RequestParam MultipartFile otherDocs,
+        @PathVariable String fundraiserId,
+        @RequestParam(required = false) MultipartFile medicalEstimate,
+        @RequestParam(required = false) MultipartFile consentLetterFromPatient,
+        @RequestParam(required = false) MultipartFile medicalReports,
+        @RequestParam(required = false) MultipartFile otherDocs,
         @RequestParam String additionalInformation
     ) {
         MedicalDocumentsDTO updatedDTO = medicalDocumentsService.updateDocuments(
             fundraiserId, medicalEstimate, consentLetterFromPatient, medicalReports, otherDocs, additionalInformation);
         return ResponseEntity.ok(updatedDTO);
-    }
-
-    // Helper method to convert a MultipartFile to a byte array
-    private byte[] convertFileToByteArray(MultipartFile file) {
-        try {
-            return file.getBytes();
-        } catch (IOException e) {
-            throw new RuntimeException("Error converting file to byte array", e);
-        }
     }
 }

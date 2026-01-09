@@ -7,8 +7,8 @@ public interface PatientVerificationService {
 
     PatientVerificationDTO createPatientVerification(PatientVerificationDTO dto);
     List<PatientVerificationDTO> getAllPatientVerifications();
-    PatientVerificationDTO getPatientVerificationByfundraiserId(int id);
-    void deletePatientVerification(int id);
-    PatientVerificationDTO updatePatientVerification(int id, PatientVerificationDTO dto);
+    PatientVerificationDTO getPatientVerificationByfundraiserId(String id);
+    void deletePatientVerification(String id);
+    PatientVerificationDTO updatePatientVerification(String id, PatientVerificationDTO dto);
 }
 
