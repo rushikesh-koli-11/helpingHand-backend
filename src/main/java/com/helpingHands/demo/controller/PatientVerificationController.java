@@ -21,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/patient-verifications")
-@CrossOrigin(origins = "http://13.60.58.158/")
 public class PatientVerificationController {
 
     private final PatientVerificationService patientVerificationService;

@@ -20,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/bank-details")
-@CrossOrigin(origins = "http://13.60.58.158/")
 public class BankDetailsController {
 
     private final BankDetailsService bankDetailsService;

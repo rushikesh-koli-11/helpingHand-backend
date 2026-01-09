@@ -23,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/medical-documents")
-@CrossOrigin(origins = "http://13.60.58.158/")
 public class MedicalDocumentsController {
 
     private final MedicalDocumentsService medicalDocumentsService;

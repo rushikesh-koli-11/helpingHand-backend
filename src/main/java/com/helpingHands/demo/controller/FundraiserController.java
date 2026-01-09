@@ -22,7 +22,6 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/fundraisers")
-@CrossOrigin(origins = "http://13.60.58.158/")
 public class FundraiserController {
 
     private final FundraiserService fundraiserService;

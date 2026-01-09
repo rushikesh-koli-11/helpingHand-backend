@@ -19,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/backgrounds")
-@CrossOrigin(origins = "http://13.60.58.158/")
 public class BackgroundController {
 
     private final BackgroundService backgroundService;
